@@ -2,7 +2,7 @@
 
 ## Team Member Assignments & Directory Boundaries
 
-### 👨‍💻 Developer 1: Backend Lead
+### 👨‍💻 Backend Lead: Bạn (You)
 - **Directory Scope**: `backend/src/main/java/com/travelgo/decision/` & `controller/`
 - **Git Branch**: `feature/backend-engine`
 - **Primary Responsibilities**:
@@ -11,7 +11,7 @@
   - Implement Greedy Constraint Scheduler (`ItineraryBuilder.java`).
   - Ensure REST Endpoint `POST /api/v1/plan-trip` returns full DTO schema with `score_contributions`.
 
-### 🎨 Developer 2: Frontend Lead
+### 🎨 Frontend Lead: Hậu (Hau)
 - **Directory Scope**: `frontend/src/components/` & `frontend/src/pages/`
 - **Git Branch**: `feature/frontend-dashboard`
 - **Primary Responsibilities**:
@@ -19,7 +19,7 @@
   - Implement Recharts visual components (Transport BarChart, Budget PieChart, Score Contribution Progress Bars).
   - Implement Itinerary Accordion & Top 3 Destination Cards.
 
-### 📊 Developer 3: Data & External API Specialist
+### 📊 Data & Weather Specialist: Phúc Ngô (PhucNgo)
 - **Directory Scope**: `backend/src/main/resources/data/` & `external/`
 - **Git Branch**: `feature/data-weather`
 - **Primary Responsibilities**:
