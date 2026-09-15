@@ -1,6 +1,6 @@
 import React from 'react';
 import { TransportOptionData } from '../types/trip';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 interface TransportCompareProps {
   options: TransportOptionData[];
@@ -28,10 +28,12 @@ export const TransportCompare: React.FC<TransportCompareProps> = ({ options }) =
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
-            <YAxis stroke="#94a3b8" fontSize={11} />
-            <Tooltip />
-            <Bar dataKey="Chi phí (k VNĐ)" fill="#059669" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="Thời gian (h)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+            <YAxis yAxisId="cost" stroke="#059669" fontSize={11} />
+            <YAxis yAxisId="time" orientation="right" stroke="#2563eb" fontSize={11} />
+            <Tooltip formatter={(value: number, name: string) => name.includes('Chi phí') ? [`${value.toLocaleString('vi-VN')} nghìn VNĐ`, name] : [`${value} giờ`, name]} />
+            <Legend wrapperStyle={{ fontSize: '12px' }} />
+            <Bar yAxisId="cost" dataKey="Chi phí (k VNĐ)" fill="#059669" radius={[4, 4, 0, 0]} />
+            <Bar yAxisId="time" dataKey="Thời gian (h)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -50,7 +52,8 @@ export const TransportCompare: React.FC<TransportCompareProps> = ({ options }) =
           </thead>
           <tbody className="divide-y divide-slate-100">
             {options.map((opt) => (
-              <tr key={opt.mode} className={opt.isParetoOptimal ? 'bg-emerald-50/40' : ''}>
+              <React.Fragment key={opt.mode}>
+              <tr className={opt.isParetoOptimal ? 'bg-emerald-50/40' : ''}>
                 <td className="p-2 font-medium text-slate-700">{opt.displayName}</td>
                 <td className="p-2 font-bold text-emerald-600">{opt.priceTotalVnd.toLocaleString('vi-VN')} đ</td>
                 <td className="p-2">{opt.durationHours} giờ</td>
@@ -65,6 +68,12 @@ export const TransportCompare: React.FC<TransportCompareProps> = ({ options }) =
                   )}
                 </td>
               </tr>
+              {opt.recommendationReason && (
+                <tr className={opt.isParetoOptimal ? 'bg-emerald-50/40' : ''}>
+                  <td colSpan={5} className="px-2 pb-3 text-sm text-slate-600">{opt.recommendationReason}</td>
+                </tr>
+              )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>

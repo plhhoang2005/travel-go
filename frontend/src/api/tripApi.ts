@@ -1,30 +1,24 @@
 import { PlanTripRequest, PlanTripResponse } from '../types/trip';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 export async function fetchPlanTrip(req: PlanTripRequest): Promise<PlanTripResponse> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/plan-trip`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(req),
-    });
+  const response = await fetch(`${API_BASE_URL}/plan-trip`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(req),
+  });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.warn('API call failed, returning fallback mock response:', error);
-    // Client-side fallback if backend is offline
-    return getFallbackResponse();
+  if (!response.ok) {
+    throw new Error(`Máy chủ phản hồi lỗi ${response.status}.`);
   }
+
+  return await response.json();
 }
 
-function getFallbackResponse(): PlanTripResponse {
+export function getFallbackResponse(): PlanTripResponse {
   return {
     winnerId: 'da-lat',
     topDestinations: [

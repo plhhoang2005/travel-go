@@ -6,6 +6,10 @@ interface ItineraryTimelineProps {
 }
 
 export const ItineraryTimeline: React.FC<ItineraryTimelineProps> = ({ days }) => {
+  if (!days?.length) {
+    return <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">Chưa có lịch trình phù hợp cho chuyến đi này.</div>;
+  }
+
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
       <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">

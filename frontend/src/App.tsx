@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { PlanTripRequest, PlanTripResponse } from './types/trip';
 import { fetchPlanTrip } from './api/tripApi';
+import { getFallbackResponse } from './api/tripApi';
 import { TripForm } from './components/TripForm';
 import { DestinationCard } from './components/DestinationCard';
 import { TransportCompare } from './components/TransportCompare';
@@ -20,14 +21,19 @@ export default function App() {
 
   const [response, setResponse] = useState<PlanTripResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isDemoData, setIsDemoData] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (nextRequest: PlanTripRequest = request) => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await fetchPlanTrip(request);
+      const res = await fetchPlanTrip(nextRequest);
       setResponse(res);
-    } catch (e) {
-      console.error('Error fetching plan:', e);
+      setIsDemoData(false);
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : 'Không thể kết nối tới máy chủ.';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -38,6 +44,7 @@ export default function App() {
   }, []);
 
   const handleApplyPreset = (presetId: number) => {
+    let preset: PlanTripRequest;
     if (presetId === 1) {
       // Đà Lạt
       const p1: PlanTripRequest = {
@@ -48,7 +55,7 @@ export default function App() {
         preferences: ['mountain', 'food', 'romantic'],
         priority: 'balanced',
       };
-      setRequest(p1);
+      preset = p1;
     } else if (presetId === 2) {
       // Phú Quốc
       const p2: PlanTripRequest = {
@@ -59,7 +66,7 @@ export default function App() {
         preferences: ['beach', 'resort', 'seafood'],
         priority: 'comfortable',
       };
-      setRequest(p2);
+      preset = p2;
     } else if (presetId === 3) {
       // Vũng Tàu
       const p3: PlanTripRequest = {
@@ -70,8 +77,18 @@ export default function App() {
         preferences: ['beach', 'food', 'quick-trip'],
         priority: 'cheapest',
       };
-      setRequest(p3);
+      preset = p3;
+    } else {
+      return;
     }
+    setRequest(preset);
+    void handleSubmit(preset);
+  };
+
+  const handleUseDemoData = () => {
+    setResponse(getFallbackResponse());
+    setIsDemoData(true);
+    setError(null);
   };
 
   return (
@@ -94,8 +111,8 @@ export default function App() {
           </div>
 
           <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 font-mono">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            System Online
+            <span className={`w-2 h-2 rounded-full ${error ? 'bg-amber-400' : 'bg-emerald-500 animate-pulse'}`}></span>
+            {error ? 'Cần kiểm tra kết nối' : 'Hệ thống sẵn sàng'}
           </div>
         </div>
       </header>
@@ -115,6 +132,25 @@ export default function App() {
 
         {/* Right Column: Output Dashboard */}
         <div className="lg:col-span-8 space-y-6">
+          {error && (
+            <div role="alert" className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-bold">Chưa lấy được kế hoạch từ máy chủ</p>
+                <p className="mt-0.5 text-amber-800">{error} Hãy bật backend tại cổng 8080 rồi thử lại.</p>
+              </div>
+              <div className="flex shrink-0 gap-2">
+                <button type="button" onClick={() => void handleSubmit()} className="rounded-lg border border-amber-300 px-3 py-2 font-semibold hover:bg-amber-100">Thử lại</button>
+                <button type="button" onClick={handleUseDemoData} className="rounded-lg bg-amber-700 px-3 py-2 font-semibold text-white hover:bg-amber-800">Xem dữ liệu demo</button>
+              </div>
+            </div>
+          )}
+
+          {isDemoData && (
+            <div role="status" className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+              Bạn đang xem dữ liệu minh họa. Kết quả này không được tính từ thông tin vừa nhập.
+            </div>
+          )}
+
           {response ? (
             <>
               {/* Top 3 Destination Cards */}
@@ -150,8 +186,8 @@ export default function App() {
               />
             </>
           ) : (
-            <div className="bg-white p-12 rounded-2xl shadow-sm border text-center text-slate-400">
-              ⏳ Đang tải dữ liệu Decision Intelligence...
+            <div role="status" aria-live="polite" className="bg-white p-12 rounded-2xl shadow-sm border text-center text-slate-500">
+              {loading ? 'Đang phân tích và xây dựng kế hoạch…' : 'Nhập thông tin để bắt đầu lập kế hoạch.'}
             </div>
           )}
         </div>

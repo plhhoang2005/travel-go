@@ -12,10 +12,11 @@ export const BudgetChart: React.FC<BudgetChartProps> = ({ budget }) => {
     { name: 'Lưu trú', value: budget.accommodation, color: '#0284c7' },
     { name: 'Ăn uống', value: budget.food, color: '#f59e0b' },
     { name: 'Tham quan', value: budget.attractions, color: '#8b5cf6' },
-    { name: 'Dự phòng an toàn', value: budget.remainingSafetyMargin, color: '#10b981' },
+    { name: 'Dự phòng an toàn', value: Math.max(0, budget.remainingSafetyMargin), color: '#10b981' },
   ].filter((item) => item.value > 0);
 
   const totalSpent = budget.transport + budget.accommodation + budget.food + budget.attractions;
+  const isOverBudget = budget.remainingSafetyMargin < 0;
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
@@ -48,12 +49,12 @@ export const BudgetChart: React.FC<BudgetChartProps> = ({ budget }) => {
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-3 text-[11px] bg-slate-50 p-2.5 rounded-xl text-slate-600 border border-slate-100">
-        🛡️ <span className="font-semibold">Dự phòng rủi ro:</span> Còn dư{' '}
-        <span className="font-bold text-emerald-600">
-          {budget.remainingSafetyMargin.toLocaleString('vi-VN')} VNĐ
+      <div role={isOverBudget ? 'alert' : undefined} className={`mt-3 rounded-xl border p-3 text-sm ${isOverBudget ? 'border-rose-200 bg-rose-50 text-rose-800' : 'border-slate-100 bg-slate-50 text-slate-600'}`}>
+        {isOverBudget ? '⚠️' : '🛡️'} <span className="font-semibold">{isOverBudget ? 'Vượt ngân sách:' : 'Dự phòng rủi ro:'}</span>{' '}
+        <span className={`font-bold ${isOverBudget ? 'text-rose-700' : 'text-emerald-600'}`}>
+          {Math.abs(budget.remainingSafetyMargin).toLocaleString('vi-VN')} VNĐ
         </span>{' '}
-        cho các chi phí phát sinh bất ngờ.
+        {isOverBudget ? 'cần được cắt giảm khỏi kế hoạch.' : 'còn lại cho các chi phí phát sinh.'}
       </div>
     </div>
   );

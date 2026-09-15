@@ -32,6 +32,8 @@ export const TripForm: React.FC<TripFormProps> = ({
     onChange({ ...request, preferences: updated });
   };
 
+  const isValid = request.preferences.length > 0 && request.budgetVnd > 0;
+
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
       <div className="flex items-center justify-between mb-4">
@@ -40,20 +42,23 @@ export const TripForm: React.FC<TripFormProps> = ({
         </h2>
         
         {/* Presets Quick Fill */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap justify-end gap-2">
           <button
+            type="button"
             onClick={() => onApplyPreset(1)}
             className="text-xs px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
           >
             📍 Demo 1: Đà Lạt
           </button>
           <button
+            type="button"
             onClick={() => onApplyPreset(2)}
             className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
           >
             📍 Demo 2: Phú Quốc
           </button>
           <button
+            type="button"
             onClick={() => onApplyPreset(3)}
             className="text-xs px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-medium"
           >
@@ -62,7 +67,7 @@ export const TripForm: React.FC<TripFormProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-2 lg:grid-cols-1">
         {/* Origin */}
         <div>
           <label className="block text-xs font-semibold text-slate-500 mb-1">
@@ -86,6 +91,7 @@ export const TripForm: React.FC<TripFormProps> = ({
           </label>
           <input
             type="range"
+            aria-label="Số ngày đi"
             min="2"
             max="5"
             value={request.numDays}
@@ -101,6 +107,7 @@ export const TripForm: React.FC<TripFormProps> = ({
           </label>
           <input
             type="range"
+            aria-label="Số người đi"
             min="1"
             max="6"
             value={request.numPeople}
@@ -122,6 +129,7 @@ export const TripForm: React.FC<TripFormProps> = ({
         </div>
         <input
           type="range"
+          aria-label="Ngân sách tổng cộng"
           min="1000000"
           max="15000000"
           step="500000"
@@ -149,6 +157,7 @@ export const TripForm: React.FC<TripFormProps> = ({
               <button
                 key={pref.id}
                 type="button"
+                aria-pressed={selected}
                 onClick={() => togglePref(pref.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   selected
@@ -161,12 +170,50 @@ export const TripForm: React.FC<TripFormProps> = ({
             );
           })}
         </div>
+        {!isValid && (
+          <p role="alert" className="mt-2 text-sm font-medium text-rose-600">
+            Hãy chọn ít nhất một sở thích để hệ thống có thể đề xuất điểm đến.
+          </p>
+        )}
       </div>
+
+      <fieldset className="mb-5">
+        <legend className="mb-2 text-sm font-semibold text-slate-600">Ưu tiên chuyến đi</legend>
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            ['cheapest', 'Tiết kiệm'],
+            ['fastest', 'Nhanh nhất'],
+            ['balanced', 'Cân bằng'],
+            ['comfortable', 'Thoải mái'],
+          ] as const).map(([value, label]) => (
+            <label
+              key={value}
+              className={`cursor-pointer rounded-xl border px-3 py-2.5 text-center text-sm font-semibold transition-colors ${
+                request.priority === value
+                  ? 'border-emerald-600 bg-emerald-50 text-emerald-800'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+              }`}
+            >
+              <input
+                type="radio"
+                name="priority"
+                value={value}
+                checked={request.priority === value}
+                onChange={() => onChange({ ...request, priority: value })}
+                className="sr-only"
+              />
+              {label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       {/* Submit Button */}
       <button
         onClick={onSubmit}
-        disabled={loading}
+        type="button"
+        disabled={loading || !isValid}
+        aria-busy={loading}
         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {loading ? (
