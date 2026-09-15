@@ -1,0 +1,18 @@
+[
+  {
+    "destination_id": "da-lat",
+    "categories": [
+      {"tier": "budget", "name": "Homestay / Hostel trung tâm", "avg_nightly_vnd": 300000},
+      {"tier": "standard", "name": "Khách sạn 3 sao Hồ Xuân Hương", "avg_nightly_vnd": 650000},
+      {"tier": "premium", "name": "Resort Tuyền Lâm 4-5 sao", "avg_nightly_vnd": 1800000}
+    ]
+  },
+  {
+    "destination_id": "phu-quoc",
+    "categories": [
+      {"tier": "budget", "name": "Bungalow Dương Đông", "avg_nightly_vnd": 450000},
+      {"tier": "standard", "name": "Khách sạn 3-4 sao Sunset Town", "avg_nightly_vnd": 1100000},
+      {"tier": "premium", "name": "Vinpearl / JW Marriott Resort", "avg_nightly_vnd": 3500000}
+    ]
+  }
+]

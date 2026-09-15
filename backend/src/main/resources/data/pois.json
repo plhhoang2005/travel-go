@@ -1,0 +1,21 @@
+[
+  {
+    "destination_id": "da-lat",
+    "pois": [
+      {"name": "Ăn sáng Bánh mì xíu mại Hoàng Diệu", "type": "food", "cost_vnd": 40000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Dạo quanh & Chụp ảnh Hồ Xuân Hương", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 1.5, "time_of_day": "morning"},
+      {"name": "Tham quan Thung Lũng Tình Yêu", "type": "sightseeing", "cost_vnd": 250000, "duration_hours": 2.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Cà phê Túi Mơ To (Ngắm hoàng hôn)", "type": "cafe", "cost_vnd": 80000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Khám phá Chợ Đêm Đà Lạt & Lẩu gà lá é", "type": "food", "cost_vnd": 180000, "duration_hours": 2.5, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "phu-quoc",
+    "pois": [
+      {"name": "Ăn sáng Bún quậy Kiến Xây", "type": "food", "cost_vnd": 60000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Tắm biển & Chụp ảnh Bãi Sao", "type": "beach", "cost_vnd": 0, "duration_hours": 2.5, "time_of_day": "morning"},
+      {"name": "Tham quan Cầu Hôn (Kiss Bridge) Sunset Town", "type": "sightseeing", "cost_vnd": 100000, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Hải sản Chợ đêm Dinh Cậu", "type": "food", "cost_vnd": 350000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
+  }
+]

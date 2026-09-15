@@ -1,0 +1,9 @@
+{
+  "reference_month": "09/2026",
+  "disclaimer": "Bảng giá được cập nhật tham khảo tháng 09/2026. Giá thực tế có thể dao động 10-15% tùy thời điểm đặt vé và phòng.",
+  "food_daily_estimate": {
+    "budget": 200000,
+    "standard": 350000,
+    "premium": 700000
+  }
+}

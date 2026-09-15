@@ -1,0 +1,62 @@
+[
+  {
+    "route_key": "Ho Chi Minh-da-lat",
+    "options": [
+      {
+        "mode": "xe_khach",
+        "display_name": "Xe khách giường nằm (Phương Trang / Thành Bưởi)",
+        "price_total_vnd": 500000,
+        "duration_hours": 7.5,
+        "comfort_score": 7,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "cheapest",
+        "recommendation_reason": "Giá rẻ nhất, tiết kiệm ngân sách di chuyển"
+      },
+      {
+        "mode": "may_bay",
+        "display_name": "Máy bay (Vietjet / Vietnam Airlines)",
+        "price_total_vnd": 1800000,
+        "duration_hours": 1.0,
+        "comfort_score": 9,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "fastest",
+        "recommendation_reason": "Tiết kiệm thời gian di chuyển tối đa"
+      },
+      {
+        "mode": "xe_may",
+        "display_name": "Xe máy cá nhân / Phượt",
+        "price_total_vnd": 300000,
+        "duration_hours": 8.5,
+        "comfort_score": 4,
+        "is_pareto_optimal": false,
+        "tradeoff_type": "adventure",
+        "recommendation_reason": "Phù hợp phượt thủ trải nghiệm cảnh đèo"
+      }
+    ]
+  },
+  {
+    "route_key": "Ho Chi Minh-nha-trang",
+    "options": [
+      {
+        "mode": "tau_lua",
+        "display_name": "Tàu hỏa (Ghế ngồi mềm ĐS&VN)",
+        "price_total_vnd": 700000,
+        "duration_hours": 7.0,
+        "comfort_score": 8,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "balanced",
+        "recommendation_reason": "Cân bằng tốt nhất giữa giá cả và độ thoải mái"
+      },
+      {
+        "mode": "may_bay",
+        "display_name": "Máy bay Sài Gòn - Cam Ranh",
+        "price_total_vnd": 1500000,
+        "duration_hours": 1.2,
+        "comfort_score": 9,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "fastest",
+        "recommendation_reason": "Nhanh nhất cho chuyến đi 2-3 ngày"
+      }
+    ]
+  }
+]

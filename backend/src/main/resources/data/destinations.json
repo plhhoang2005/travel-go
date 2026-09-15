@@ -1,0 +1,47 @@
+[
+  {
+    "id": "da-lat",
+    "name": "Đà Lạt",
+    "region": "Tây Nguyên",
+    "coordinates": {"lat": 11.9465, "lon": 108.4419},
+    "tags": ["mountain", "food", "romantic", "flowers", "cool-weather"],
+    "uniqueness_score": 8.5,
+    "avg_daily_cost_vnd": 600000
+  },
+  {
+    "id": "nha-trang",
+    "name": "Nha Trang",
+    "region": "Duyên hải Nam Trung Bộ",
+    "coordinates": {"lat": 12.2388, "lon": 109.1967},
+    "tags": ["beach", "seafood", "resort", "island"],
+    "uniqueness_score": 8.0,
+    "avg_daily_cost_vnd": 750000
+  },
+  {
+    "id": "phu-quoc",
+    "name": "Phú Quốc",
+    "region": "Đồng bằng Sông Cửu Long",
+    "coordinates": {"lat": 10.2899, "lon": 103.9840},
+    "tags": ["beach", "resort", "luxury", "sunset", "island"],
+    "uniqueness_score": 9.0,
+    "avg_daily_cost_vnd": 1200000
+  },
+  {
+    "id": "da-nang",
+    "name": "Đà Nẵng",
+    "region": "Duyên hải Nam Trung Bộ",
+    "coordinates": {"lat": 16.0544, "lon": 108.2022},
+    "tags": ["beach", "city", "food", "bridge", "heritage"],
+    "uniqueness_score": 8.7,
+    "avg_daily_cost_vnd": 800000
+  },
+  {
+    "id": "vung-tau",
+    "name": "Vũng Tàu",
+    "region": "Đông Nam Bộ",
+    "coordinates": {"lat": 10.3460, "lon": 107.0843},
+    "tags": ["beach", "seafood", "quick-trip", "budget"],
+    "uniqueness_score": 7.2,
+    "avg_daily_cost_vnd": 450000
+  }
+]
