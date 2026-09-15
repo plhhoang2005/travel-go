@@ -1,5 +1,6 @@
 package com.travelgo.controller;
 
+import com.travelgo.dto.BudgetSensitivityResult;
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse;
 import com.travelgo.service.TripPlanningService;
@@ -24,6 +25,12 @@ public class TripController {
     public ResponseEntity<PlanTripResponse> planTrip(@RequestBody PlanTripRequest request) {
         PlanTripResponse response = tripPlanningService.planTrip(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/simulate-sensitivity")
+    public ResponseEntity<BudgetSensitivityResult> simulateSensitivity(@RequestBody PlanTripRequest request) {
+        BudgetSensitivityResult result = tripPlanningService.simulateSensitivity(request);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/health")

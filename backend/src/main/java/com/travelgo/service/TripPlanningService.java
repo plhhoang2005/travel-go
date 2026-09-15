@@ -1,8 +1,19 @@
 package com.travelgo.service;
 
+import com.travelgo.data.DataLoaderService;
+import com.travelgo.decision.itinerary.ItineraryBuilder;
+import com.travelgo.decision.mcda.DestinationScorer;
+import com.travelgo.decision.pareto.TransportOptimizer;
+import com.travelgo.decision.sensitivity.BudgetSimulator;
+import com.travelgo.dto.BudgetSensitivityResult;
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse;
 import com.travelgo.dto.PlanTripResponse.*;
+import com.travelgo.model.Destination;
+import com.travelgo.model.DestinationHotels.HotelCategory;
+import com.travelgo.model.DestinationPois.PoiItem;
+import com.travelgo.model.RouteTransport;
+import com.travelgo.model.RouteTransport.Option;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -10,134 +21,136 @@ import java.util.*;
 @Service
 public class TripPlanningService {
 
-    // Constants for MCDA Weights (No Magic Numbers rule)
-    public static final double WEIGHT_BUDGET = 0.30;
-    public static final double WEIGHT_WEATHER = 0.20;
-    public static final double WEIGHT_PREFERENCE = 0.25;
-    public static final double WEIGHT_TRAVEL_TIME = 0.15;
-    public static final double WEIGHT_UNIQUENESS = 0.10;
+    private final DestinationScorer destinationScorer;
+    private final TransportOptimizer transportOptimizer;
+    private final ItineraryBuilder itineraryBuilder;
+    private final BudgetSimulator budgetSimulator;
+    private final DataLoaderService dataLoaderService;
+
+    public TripPlanningService(DestinationScorer destinationScorer,
+                               TransportOptimizer transportOptimizer,
+                               ItineraryBuilder itineraryBuilder,
+                               BudgetSimulator budgetSimulator,
+                               DataLoaderService dataLoaderService) {
+        this.destinationScorer = destinationScorer;
+        this.transportOptimizer = transportOptimizer;
+        this.itineraryBuilder = itineraryBuilder;
+        this.budgetSimulator = budgetSimulator;
+        this.dataLoaderService = dataLoaderService;
+    }
 
     public PlanTripResponse planTrip(PlanTripRequest req) {
         PlanTripResponse resp = new PlanTripResponse();
-        resp.setWinnerId("da-lat");
 
-        // 1. Top Destinations with Normalized Scores & Contributions
-        List<DestinationCard> destinations = new ArrayList<>();
-        destinations.add(createDestination("da-lat", "Đà Lạt", 9.0, 8.5, 9.5, 7.5, 8.5, 3800000L));
-        destinations.add(createDestination("nha-trang", "Nha Trang", 8.0, 8.0, 7.0, 8.5, 8.0, 4200000L));
-        destinations.add(createDestination("vung-tau", "Vũng Tàu", 9.5, 7.5, 6.0, 9.5, 7.2, 2200000L));
-        resp.setTopDestinations(destinations);
+        // 1. Process Destinations with MCDA Engine
+        List<Destination> rawDestinations = dataLoaderService.getDestinations();
+        List<DestinationCard> destinationCards = new ArrayList<>();
 
-        // 2. Transport Pareto Options
-        List<TransportOption> transports = new ArrayList<>();
-        TransportOption bus = new TransportOption();
-        bus.setMode("xe_khach");
-        bus.setDisplayName("Xe khách giường nằm (Thành Bưởi/Phương Trang)");
-        bus.setPriceTotalVnd(500000L);
-        bus.setDurationHours(7.5);
-        bus.setComfortScore(7);
-        bus.setParetoOptimal(true);
-        bus.setTradeoffType("cheapest");
-        bus.setRecommendationReason("Giá rẻ nhất, tiết kiệm tối đa ngân sách di chuyển.");
-        transports.add(bus);
+        for (Destination dest : rawDestinations) {
+            RouteTransport rt = dataLoaderService.getRouteTransport(req.getOrigin(), dest.getId());
+            double travelTime = 6.0;
+            long transportCost = 600_000L;
 
-        TransportOption train = new TransportOption();
-        train.setMode("tau_lua");
-        train.setDisplayName("Tàu hỏa (Ghế ngồi mềm ĐS&VN)");
-        train.setPriceTotalVnd(700000L);
-        train.setDurationHours(6.0);
-        train.setComfortScore(8);
-        train.setParetoOptimal(true);
-        train.setTradeoffType("balanced");
-        train.setRecommendationReason("Cân bằng hoàn hảo giữa giá tiền và sự thoải mái.");
-        transports.add(train);
+            if (rt != null && rt.getOptions() != null && !rt.getOptions().isEmpty()) {
+                Option opt = rt.getOptions().get(0);
+                travelTime = opt.getDurationHours();
+                transportCost = opt.getPriceTotalVnd();
+            }
 
-        TransportOption flight = new TransportOption();
-        flight.setMode("may_bay");
-        flight.setDisplayName("Máy bay Sài Gòn - Liên Khương");
-        flight.setPriceTotalVnd(1800000L);
-        flight.setDurationHours(1.0);
-        flight.setComfortScore(9);
-        flight.setParetoOptimal(true);
-        flight.setTradeoffType("fastest");
-        flight.setRecommendationReason("Nhanh nhất, tiết kiệm thời gian di chuyển.");
-        transports.add(flight);
+            long estCost = (dest.getAvgDailyCostVnd() * req.getNumDays()) + transportCost;
+            double weatherScore = 8.5; // Mock live weather score
 
+            DestinationCard card = destinationScorer.scoreDestination(dest, req, weatherScore, travelTime, estCost);
+            destinationCards.add(card);
+        }
+
+        // Sort by totalScore descending
+        destinationCards.sort((a, b) -> Double.compare(b.getTotalScore(), a.getTotalScore()));
+        resp.setTopDestinations(destinationCards);
+
+        DestinationCard winner = destinationCards.isEmpty() ? null : destinationCards.get(0);
+        String winnerId = winner != null ? winner.getId() : "da-lat";
+        resp.setWinnerId(winnerId);
+
+        // 2. Process Transport Options with Pareto Optimizer
+        RouteTransport winnerRoute = dataLoaderService.getRouteTransport(req.getOrigin(), winnerId);
+        List<TransportOption> transports = convertTransportOptions(winnerRoute);
+        transports = transportOptimizer.optimize(transports);
         resp.setTransportOptions(transports);
 
-        // 3. Itinerary Days (Greedy Constraint)
-        List<ItineraryDay> days = new ArrayList<>();
-        ItineraryDay day1 = new ItineraryDay();
-        day1.setDay(1);
-        day1.setTitle("Khám phá trung tâm & Ẩm thực phố núi");
-        day1.setActivities(Arrays.asList(
-                new Activity("08:00", "Ăn sáng Bánh mì xíu mại Hoàng Diệu", 40000L, 1.0),
-                new Activity("09:30", "Dạo quanh Hồ Xuân Hương", 0L, 1.5),
-                new Activity("14:00", "Tham quan Thung lũng Tình Yêu", 250000L, 2.5),
-                new Activity("18:30", "Khám phá Chợ Đêm Đà Lạt & Lẩu gà lá é", 180000L, 2.5)
-        ));
-        days.add(day1);
-
-        ItineraryDay day2 = new ItineraryDay();
-        day2.setDay(2);
-        day2.setTitle("Săn mây & Cafe ngắm cảnh đồi núi");
-        day2.setActivities(Arrays.asList(
-                new Activity("06:00", "Săn mây Đồi Cầu Đất", 0L, 2.5),
-                new Activity("10:00", "Check-in Vườn hoa Đà Lạt", 100000L, 2.0),
-                new Activity("15:00", "Thưởng thức Cà phê Túi Mơ To", 80000L, 2.0)
-        ));
-        days.add(day2);
-
+        // 3. Build Itinerary with Greedy Constraint Scheduler
+        List<PoiItem> pois = dataLoaderService.getPoisForDestination(winnerId);
+        long attractionsBudget = 500_000L;
+        List<ItineraryDay> days = itineraryBuilder.buildItinerary(winnerId, req.getNumDays(), attractionsBudget, pois);
         resp.setItineraryDays(days);
 
-        // 4. Budget Breakdown
-        BudgetBreakdown budget = new BudgetBreakdown();
-        budget.setTransport(700000L);
-        budget.setAccommodation(1200000L);
-        budget.setFood(1100000L);
-        budget.setAttractions(400000L);
-        budget.setRemainingSafetyMargin(600000L);
-        resp.setBudgetBreakdown(budget);
+        // 4. Calculate Budget Breakdown
+        TransportOption bestTransport = transports.stream()
+                .filter(t -> t.isParetoOptimal() && ("balanced".equalsIgnoreCase(t.getTradeoffType()) || "cheapest".equalsIgnoreCase(t.getTradeoffType())))
+                .findFirst()
+                .orElse(!transports.isEmpty() ? transports.get(0) : null);
 
-        // 5. Non-blocking AI Explanation
-        resp.setAiExplanation("Đà Lạt được hệ thống TravelGO đề xuất là lựa chọn số 1 (8.76/10) nhờ chỉ số Phù hợp Sở thích (Preference Match) đạt 9.5/10 và Ngân sách vừa vặn (3.8 tr / 4.0 tr). Phương tiện Tàu hỏa được khuyến nghị cho tiêu chí cân bằng.");
+        long transportCost = bestTransport != null ? bestTransport.getPriceTotalVnd() : 500_000L;
 
-        // Data Sources & Assumptions
+        List<HotelCategory> hotelCats = dataLoaderService.getHotelsForDestination(winnerId);
+        long hotelCostPerNight = hotelCats.isEmpty() ? 500_000L : hotelCats.get(0).getAvgNightlyVnd();
+        long totalHotelCost = hotelCostPerNight * req.getNumDays();
+
+        long foodCost = 300_000L * req.getNumDays();
+        long totalAttractionsCost = days.stream()
+                .flatMap(d -> d.getActivities().stream())
+                .mapToLong(Activity::getCostVnd)
+                .sum();
+
+        long spent = transportCost + totalHotelCost + foodCost + totalAttractionsCost;
+        long safetyMargin = req.getBudgetVnd() - spent;
+
+        BudgetBreakdown breakdown = new BudgetBreakdown();
+        breakdown.setTransport(transportCost);
+        breakdown.setAccommodation(totalHotelCost);
+        breakdown.setFood(foodCost);
+        breakdown.setAttractions(totalAttractionsCost);
+        breakdown.setRemainingSafetyMargin(safetyMargin);
+        resp.setBudgetBreakdown(breakdown);
+
+        // 5. AI Explanation
+        resp.setAiExplanation(String.format(
+                "Điểm đến %s được hệ thống đề xuất là lựa chọn tối ưu nhất (điểm MCDA: %.2f/10) nhờ chỉ số Phù hợp Sở thích và Chi phí hợp lý. Phương tiện %s được khuyến nghị dựa trên phân tích Pareto Dominance.",
+                winner != null ? winner.getName() : winnerId,
+                winner != null ? winner.getTotalScore() : 9.0,
+                bestTransport != null ? bestTransport.getDisplayName() : "Vận chuyển công cộng"
+        ));
+
+        // Data sources & assumptions
         Map<String, String> sources = new LinkedHashMap<>();
         sources.put("weather", "Open-Meteo Live API");
-        sources.put("prices", "TripAI Reference Dataset (Mock 09/2026)");
+        sources.put("prices", "TravelGO Reference Dataset (09/2026)");
         resp.setDataSources(sources);
-
         resp.setAssumptions(Collections.singletonList("Giá vé xe/tàu và khách sạn có thể dao động 10-15% tùy thời điểm đặt thực tế."));
 
         return resp;
     }
 
-    private DestinationCard createDestination(String id, String name, double bFit, double wScore, double pMatch, double tTime, double uScore, long cost) {
-        DestinationCard card = new DestinationCard();
-        card.setId(id);
-        card.setName(name);
-        card.setEstimatedCostVnd(cost);
+    public BudgetSensitivityResult simulateSensitivity(PlanTripRequest req) {
+        return budgetSimulator.simulateSensitivity(req);
+    }
 
-        Map<String, Double> normalized = new LinkedHashMap<>();
-        normalized.put("budget_fit", bFit);
-        normalized.put("weather", wScore);
-        normalized.put("preference_match", pMatch);
-        normalized.put("travel_time", tTime);
-        normalized.put("uniqueness", uScore);
-        card.setNormalizedScores(normalized);
+    private List<TransportOption> convertTransportOptions(RouteTransport rt) {
+        List<TransportOption> result = new ArrayList<>();
+        if (rt == null || rt.getOptions() == null) return result;
 
-        Map<String, Double> contrib = new LinkedHashMap<>();
-        contrib.put("budget_fit", Math.round(bFit * WEIGHT_BUDGET * 100.0) / 100.0);
-        contrib.put("weather", Math.round(wScore * WEIGHT_WEATHER * 100.0) / 100.0);
-        contrib.put("preference_match", Math.round(pMatch * WEIGHT_PREFERENCE * 100.0) / 100.0);
-        contrib.put("travel_time", Math.round(tTime * WEIGHT_TRAVEL_TIME * 100.0) / 100.0);
-        contrib.put("uniqueness", Math.round(uScore * WEIGHT_UNIQUENESS * 100.0) / 100.0);
-        card.setScoreContributions(contrib);
-
-        double total = contrib.values().stream().mapToDouble(Double::doubleValue).sum();
-        card.setTotalScore(Math.round(total * 100.0) / 100.0);
-
-        return card;
+        for (Option opt : rt.getOptions()) {
+            TransportOption dto = new TransportOption();
+            dto.setMode(opt.getMode());
+            dto.setDisplayName(opt.getDisplayName());
+            dto.setPriceTotalVnd(opt.getPriceTotalVnd());
+            dto.setDurationHours(opt.getDurationHours());
+            dto.setComfortScore(opt.getComfortScore());
+            dto.setParetoOptimal(opt.isParetoOptimal());
+            dto.setTradeoffType(opt.getTradeoffType());
+            dto.setRecommendationReason(opt.getRecommendationReason());
+            result.add(dto);
+        }
+        return result;
     }
 }
