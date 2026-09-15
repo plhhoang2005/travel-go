@@ -47,6 +47,7 @@ public class PlanTripResponse {
         private Map<String, Double> normalizedScores;
         private Map<String, Double> scoreContributions;
         private long estimatedCostVnd;
+        private String weatherSource;
 
         public DestinationCard() {}
 
@@ -67,6 +68,9 @@ public class PlanTripResponse {
 
         public long getEstimatedCostVnd() { return estimatedCostVnd; }
         public void setEstimatedCostVnd(long estimatedCostVnd) { this.estimatedCostVnd = estimatedCostVnd; }
+
+        public String getWeatherSource() { return weatherSource; }
+        public void setWeatherSource(String weatherSource) { this.weatherSource = weatherSource; }
     }
 
     public static class TransportOption {

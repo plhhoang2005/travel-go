@@ -9,6 +9,8 @@ import com.travelgo.dto.BudgetSensitivityResult;
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse;
 import com.travelgo.dto.PlanTripResponse.*;
+import com.travelgo.external.weather.WeatherInfo;
+import com.travelgo.external.weather.WeatherService;
 import com.travelgo.model.Destination;
 import com.travelgo.model.DestinationHotels.HotelCategory;
 import com.travelgo.model.DestinationPois.PoiItem;
@@ -26,17 +28,20 @@ public class TripPlanningService {
     private final ItineraryBuilder itineraryBuilder;
     private final BudgetSimulator budgetSimulator;
     private final DataLoaderService dataLoaderService;
+    private final WeatherService weatherService;
 
     public TripPlanningService(DestinationScorer destinationScorer,
                                TransportOptimizer transportOptimizer,
                                ItineraryBuilder itineraryBuilder,
                                BudgetSimulator budgetSimulator,
-                               DataLoaderService dataLoaderService) {
+                               DataLoaderService dataLoaderService,
+                               WeatherService weatherService) {
         this.destinationScorer = destinationScorer;
         this.transportOptimizer = transportOptimizer;
         this.itineraryBuilder = itineraryBuilder;
         this.budgetSimulator = budgetSimulator;
         this.dataLoaderService = dataLoaderService;
+        this.weatherService = weatherService;
     }
 
     public PlanTripResponse planTrip(PlanTripRequest req) {
@@ -45,6 +50,7 @@ public class TripPlanningService {
         // 1. Process Destinations with MCDA Engine
         List<Destination> rawDestinations = dataLoaderService.getDestinations();
         List<DestinationCard> destinationCards = new ArrayList<>();
+        boolean allLiveWeather = true;
 
         for (Destination dest : rawDestinations) {
             RouteTransport rt = dataLoaderService.getRouteTransport(req.getOrigin(), dest.getId());
@@ -58,9 +64,14 @@ public class TripPlanningService {
             }
 
             long estCost = (dest.getAvgDailyCostVnd() * req.getNumDays()) + transportCost;
-            double weatherScore = 8.5; // Mock live weather score
+            
+            // Real-time Open-Meteo Weather Service
+            WeatherInfo weatherInfo = weatherService.getWeatherForCity(dest.getId());
+            if (weatherInfo == null || !WeatherService.SOURCE_LIVE.equals(weatherInfo.getSource())) {
+                allLiveWeather = false;
+            }
 
-            DestinationCard card = destinationScorer.scoreDestination(dest, req, weatherScore, travelTime, estCost);
+            DestinationCard card = destinationScorer.scoreDestination(dest, req, weatherInfo, travelTime, estCost);
             destinationCards.add(card);
         }
 
@@ -123,7 +134,7 @@ public class TripPlanningService {
 
         // Data sources & assumptions
         Map<String, String> sources = new LinkedHashMap<>();
-        sources.put("weather", "Open-Meteo Live API");
+        sources.put("weather", allLiveWeather ? WeatherService.SOURCE_LIVE : WeatherService.SOURCE_FALLBACK);
         sources.put("prices", "TravelGO Reference Dataset (09/2026)");
         resp.setDataSources(sources);
         resp.setAssumptions(Collections.singletonList("Giá vé xe/tàu và khách sạn có thể dao động 10-15% tùy thời điểm đặt thực tế."));
