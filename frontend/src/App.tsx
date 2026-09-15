@@ -21,10 +21,10 @@ export default function App() {
   const [response, setResponse] = useState<PlanTripResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (nextRequest: PlanTripRequest = request) => {
     setLoading(true);
     try {
-      const res = await fetchPlanTrip(request);
+      const res = await fetchPlanTrip(nextRequest);
       setResponse(res);
     } catch (e) {
       console.error('Error fetching plan:', e);
@@ -49,6 +49,7 @@ export default function App() {
         priority: 'balanced',
       };
       setRequest(p1);
+      void handleSubmit(p1);
     } else if (presetId === 2) {
       // Phú Quốc
       const p2: PlanTripRequest = {
@@ -60,6 +61,7 @@ export default function App() {
         priority: 'comfortable',
       };
       setRequest(p2);
+      void handleSubmit(p2);
     } else if (presetId === 3) {
       // Vũng Tàu
       const p3: PlanTripRequest = {
@@ -71,6 +73,7 @@ export default function App() {
         priority: 'cheapest',
       };
       setRequest(p3);
+      void handleSubmit(p3);
     }
   };
 
@@ -107,7 +110,7 @@ export default function App() {
           <TripForm
             request={request}
             onChange={setRequest}
-            onSubmit={handleSubmit}
+            onSubmit={() => void handleSubmit()}
             onApplyPreset={handleApplyPreset}
             loading={loading}
           />

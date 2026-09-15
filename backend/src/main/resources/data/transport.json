@@ -58,5 +58,55 @@
         "recommendation_reason": "Nhanh nhất cho chuyến đi 2-3 ngày"
       }
     ]
+  },
+  {
+    "route_key": "Ho Chi Minh-phu-quoc",
+    "options": [
+      {
+        "mode": "may_bay",
+        "display_name": "Máy bay Sài Gòn - Phú Quốc",
+        "price_total_vnd": 2400000,
+        "duration_hours": 1.0,
+        "comfort_score": 9,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "fastest",
+        "recommendation_reason": "Nhanh và thuận tiện nhất cho gia đình"
+      },
+      {
+        "mode": "xe_khach_tau_cao_toc",
+        "display_name": "Xe khách đến Hà Tiên và tàu cao tốc",
+        "price_total_vnd": 1400000,
+        "duration_hours": 10.5,
+        "comfort_score": 6,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "cheapest",
+        "recommendation_reason": "Tiết kiệm chi phí nhưng thời gian di chuyển dài"
+      }
+    ]
+  },
+  {
+    "route_key": "Ho Chi Minh-vung-tau",
+    "options": [
+      {
+        "mode": "xe_khach",
+        "display_name": "Xe limousine Sài Gòn - Vũng Tàu",
+        "price_total_vnd": 400000,
+        "duration_hours": 2.5,
+        "comfort_score": 8,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "balanced",
+        "recommendation_reason": "Cân bằng giữa giá, thời gian và sự thoải mái"
+      },
+      {
+        "mode": "xe_may",
+        "display_name": "Xe máy cá nhân",
+        "price_total_vnd": 220000,
+        "duration_hours": 3.0,
+        "comfort_score": 5,
+        "is_pareto_optimal": true,
+        "tradeoff_type": "cheapest",
+        "recommendation_reason": "Chi phí thấp và phù hợp chuyến đi ngắn"
+      }
+    ]
   }
 ]

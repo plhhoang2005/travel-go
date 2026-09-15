@@ -14,5 +14,29 @@
       {"tier": "standard", "name": "Khách sạn 3-4 sao Sunset Town", "avg_nightly_vnd": 1100000},
       {"tier": "premium", "name": "Vinpearl / JW Marriott Resort", "avg_nightly_vnd": 3500000}
     ]
+  },
+  {
+    "destination_id": "nha-trang",
+    "categories": [
+      {"tier": "budget", "name": "Hostel gần biển Nha Trang", "avg_nightly_vnd": 350000},
+      {"tier": "standard", "name": "Khách sạn 3 sao đường Trần Phú", "avg_nightly_vnd": 750000},
+      {"tier": "premium", "name": "Resort Hòn Tre", "avg_nightly_vnd": 2400000}
+    ]
+  },
+  {
+    "destination_id": "da-nang",
+    "categories": [
+      {"tier": "budget", "name": "Homestay gần biển Mỹ Khê", "avg_nightly_vnd": 350000},
+      {"tier": "standard", "name": "Khách sạn 3 sao Sơn Trà", "avg_nightly_vnd": 800000},
+      {"tier": "premium", "name": "Resort ven biển Ngũ Hành Sơn", "avg_nightly_vnd": 2800000}
+    ]
+  },
+  {
+    "destination_id": "vung-tau",
+    "categories": [
+      {"tier": "budget", "name": "Nhà nghỉ khu Bãi Sau", "avg_nightly_vnd": 300000},
+      {"tier": "standard", "name": "Khách sạn 3 sao Thùy Vân", "avg_nightly_vnd": 650000},
+      {"tier": "premium", "name": "Resort ven biển Long Hải", "avg_nightly_vnd": 1900000}
+    ]
   }
 ]

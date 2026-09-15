@@ -47,6 +47,11 @@ public class BudgetSimulator {
      * Runs 3-step budget sensitivity simulation for 3M, 4M, and 5M VND.
      */
     public BudgetSensitivityResult simulateSensitivity(PlanTripRequest baseRequest) {
+        return simulateSensitivity(baseRequest, Collections.emptyMap());
+    }
+
+    public BudgetSensitivityResult simulateSensitivity(PlanTripRequest baseRequest,
+                                                        Map<String, Double> weatherScores) {
         List<BudgetStep> steps = new ArrayList<>();
 
         for (long budget : SIMULATION_BUDGETS) {
@@ -59,14 +64,15 @@ public class BudgetSimulator {
                     baseRequest.getPriority()
             );
 
-            BudgetStep step = runSimulationStep(stepReq, budget);
+            BudgetStep step = runSimulationStep(stepReq, budget, weatherScores);
             steps.add(step);
         }
 
         return new BudgetSensitivityResult(steps);
     }
 
-    private BudgetStep runSimulationStep(PlanTripRequest req, long budgetVnd) {
+    private BudgetStep runSimulationStep(PlanTripRequest req, long budgetVnd,
+                                         Map<String, Double> weatherScores) {
         BudgetStep step = new BudgetStep();
         step.setBudgetVnd(budgetVnd);
         step.setBudgetLabel(getBudgetLabel(budgetVnd));
@@ -95,7 +101,7 @@ public class BudgetSimulator {
             }
 
             long estCost = (dest.getAvgDailyCostVnd() * req.getNumDays()) + transportCost;
-            double weatherScore = 8.5; // Default score or live
+            double weatherScore = weatherScores.getOrDefault(dest.getId(), DestinationScorer.DEFAULT_NEUTRAL_SCORE);
 
             DestinationCard card = destinationScorer.scoreDestination(dest, req, weatherScore, travelTime, estCost);
             if (topCard == null || card.getTotalScore() > topCard.getTotalScore()) {

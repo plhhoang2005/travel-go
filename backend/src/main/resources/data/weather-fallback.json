@@ -1,0 +1,7 @@
+[
+  {"destination_id":"da-lat","temperature_min_c":15.0,"temperature_max_c":24.0,"precipitation_probability_max":55.0,"precipitation_sum_mm":5.0,"wind_speed_max_kmh":18.0},
+  {"destination_id":"nha-trang","temperature_min_c":25.0,"temperature_max_c":31.0,"precipitation_probability_max":35.0,"precipitation_sum_mm":2.0,"wind_speed_max_kmh":22.0},
+  {"destination_id":"phu-quoc","temperature_min_c":25.0,"temperature_max_c":30.0,"precipitation_probability_max":60.0,"precipitation_sum_mm":8.0,"wind_speed_max_kmh":24.0},
+  {"destination_id":"da-nang","temperature_min_c":24.0,"temperature_max_c":31.0,"precipitation_probability_max":45.0,"precipitation_sum_mm":4.0,"wind_speed_max_kmh":23.0},
+  {"destination_id":"vung-tau","temperature_min_c":25.0,"temperature_max_c":31.0,"precipitation_probability_max":45.0,"precipitation_sum_mm":4.0,"wind_speed_max_kmh":25.0}
+]

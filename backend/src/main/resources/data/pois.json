@@ -17,5 +17,29 @@
       {"name": "Tham quan Cầu Hôn (Kiss Bridge) Sunset Town", "type": "sightseeing", "cost_vnd": 100000, "duration_hours": 2.0, "time_of_day": "afternoon"},
       {"name": "Thưởng thức Hải sản Chợ đêm Dinh Cậu", "type": "food", "cost_vnd": 350000, "duration_hours": 2.0, "time_of_day": "evening"}
     ]
+  },
+  {
+    "destination_id": "nha-trang",
+    "pois": [
+      {"name": "Tắm biển Trần Phú", "type": "beach", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Tham quan Tháp Bà Ponagar", "type": "heritage", "cost_vnd": 30000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức hải sản Nha Trang", "type": "food", "cost_vnd": 300000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "da-nang",
+    "pois": [
+      {"name": "Tắm biển Mỹ Khê", "type": "beach", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Tham quan Ngũ Hành Sơn", "type": "sightseeing", "cost_vnd": 40000, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Dạo Cầu Rồng và ăn đặc sản", "type": "food", "cost_vnd": 220000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "vung-tau",
+    "pois": [
+      {"name": "Tắm biển Bãi Sau", "type": "beach", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Tham quan Tượng Chúa Kitô Vua", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Ăn hải sản và bánh khọt Vũng Tàu", "type": "food", "cost_vnd": 250000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
   }
 ]

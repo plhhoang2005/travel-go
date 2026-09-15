@@ -87,7 +87,7 @@ function getFallbackResponse(): PlanTripResponse {
     },
     aiExplanation: 'Đà Lạt được hệ thống TravelGO đề xuất nhờ điểm Preference Match xuất sắc (9.5/10) và ngân sách cực kỳ hợp lý.',
     dataSources: {
-      weather: 'Open-Meteo Live API',
+      weather: 'Client mock weather (backend offline)',
       prices: 'TripAI Reference Dataset (Mock 09/2026)',
     },
     assumptions: ['Giá vé và phòng có thể biến động 10-15% tùy ngày đặt.'],
