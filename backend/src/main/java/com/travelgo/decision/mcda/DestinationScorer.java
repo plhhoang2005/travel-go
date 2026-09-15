@@ -2,6 +2,7 @@ package com.travelgo.decision.mcda;
 
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse.DestinationCard;
+import com.travelgo.external.weather.WeatherInfo;
 import com.travelgo.model.Destination;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,22 @@ public class DestinationScorer {
     public static final String KEY_PREFERENCE = "preference_match";
     public static final String KEY_TRAVEL_TIME = "travel_time";
     public static final String KEY_UNIQUENESS = "uniqueness";
+
+    /**
+     * Scores a destination using Weighted Multi-Criteria Decision Analysis (MCDA).
+     */
+    public DestinationCard scoreDestination(Destination destination,
+                                            PlanTripRequest request,
+                                            WeatherInfo weatherInfo,
+                                            double travelTimeHours,
+                                            long estimatedCostVnd) {
+        double weatherScore = (weatherInfo != null) ? weatherInfo.getWeatherScore() : DEFAULT_NEUTRAL_SCORE;
+        DestinationCard card = scoreDestination(destination, request, weatherScore, travelTimeHours, estimatedCostVnd);
+        if (weatherInfo != null) {
+            card.setWeatherSource(weatherInfo.getSource());
+        }
+        return card;
+    }
 
     /**
      * Scores a destination using Weighted Multi-Criteria Decision Analysis (MCDA).
