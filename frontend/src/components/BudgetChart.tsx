@@ -1,61 +1,46 @@
-import React from 'react';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { BudgetBreakdownData } from '../types/trip';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-interface BudgetChartProps {
-  budget: BudgetBreakdownData;
-}
-
-export const BudgetChart: React.FC<BudgetChartProps> = ({ budget }) => {
-  const data = [
-    { name: 'Di chuyển', value: budget.transport, color: '#059669' },
-    { name: 'Lưu trú', value: budget.accommodation, color: '#0284c7' },
-    { name: 'Ăn uống', value: budget.food, color: '#f59e0b' },
-    { name: 'Tham quan', value: budget.attractions, color: '#8b5cf6' },
-    { name: 'Dự phòng an toàn', value: Math.max(0, budget.remainingSafetyMargin), color: '#10b981' },
-  ].filter((item) => item.value > 0);
-
-  const totalSpent = budget.transport + budget.accommodation + budget.food + budget.attractions;
+export function BudgetChart({ budget }: { budget: BudgetBreakdownData }) {
+  const rows = [
+    { name: 'Di chuyển', value: budget.transport, color: '#4DA8DA' },
+    { name: 'Khách sạn', value: budget.accommodation, color: '#8ACCE8' },
+    { name: 'Ăn uống', value: budget.food, color: '#F6C98B' },
+    { name: 'Tham quan', value: budget.attractions, color: '#F9E7A8' },
+    { name: 'Dự phòng', value: Math.max(0, budget.remainingSafetyMargin), color: '#BDDDE3' },
+  ];
+  const spent = budget.transport + budget.accommodation + budget.food + budget.attractions;
+  const totalBudget = spent + budget.remainingSafetyMargin;
   const isOverBudget = budget.remainingSafetyMargin < 0;
+  const visibleRows = rows.filter((row) => row.value > 0);
+  const money = (amount: number) => `${amount.toLocaleString('vi-VN')}đ`;
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-      <h3 className="text-base font-bold text-slate-800 mb-1 flex items-center gap-2">
-        <span>💰</span> Phân Bổ Ngân Sách Dự Kiến
-      </h3>
-      <p className="text-xs text-slate-500 mb-3">
-        Tổng chi phí dự tính: <span className="font-bold text-emerald-600">{totalSpent.toLocaleString('vi-VN')} VNĐ</span>
-      </p>
-
-      <div className="h-52 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={45}
-              outerRadius={70}
-              paddingAngle={4}
-              dataKey="value"
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value: number) => `${value.toLocaleString('vi-VN')} VNĐ`} />
-            <Legend iconType="circle" wrapperStyle={{ fontSize: '11px' }} />
-          </PieChart>
-        </ResponsiveContainer>
+    <section className="content-section">
+      <div className="section-heading"><p className="eyebrow">Chi tiêu rõ ràng</p><h2>Phân bổ ngân sách</h2><p>Các khoản chi và phần dự phòng cho toàn bộ kế hoạch.</p></div>
+      <div className="grid items-center gap-8 md:grid-cols-[0.85fr_1.15fr]">
+        <div className="relative mx-auto h-64 w-full max-w-xs" aria-label="Biểu đồ phân bổ chi phí; số liệu chi tiết nằm trong danh sách bên cạnh.">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart><Pie data={visibleRows} dataKey="value" nameKey="name" innerRadius={76} outerRadius={106} paddingAngle={3} stroke="none" isAnimationActive={false}>
+              {visibleRows.map((row) => <Cell key={row.name} fill={row.color} />)}
+            </Pie><Tooltip formatter={(value: number) => money(value)} /></PieChart>
+          </ResponsiveContainer>
+          <div className="pointer-events-none absolute inset-0 grid place-content-center text-center"><span className="text-xs text-muted">Chi phí dự kiến</span><strong className="mt-1 text-lg">{money(spent)}</strong></div>
+        </div>
+        <div>
+          <dl className="divide-y divide-line">{rows.map((row) => <div key={row.name} className="flex items-center justify-between gap-3 py-3 text-sm"><dt className="flex items-center gap-3 text-muted"><span className="h-3 w-3 rounded-sm" style={{ background: row.color }} aria-hidden="true" />{row.name}</dt><dd className="font-semibold">{money(row.value)}</dd></div>)}</dl>
+          <p role={isOverBudget ? 'alert' : undefined} className={`mt-4 rounded-lg border px-4 py-3 text-sm leading-6 ${isOverBudget ? 'border-rose-200 bg-rose-50 text-rose-800' : 'border-line bg-ocean-50 text-ocean-800'}`}>
+            {isOverBudget ? `Kế hoạch vượt ngân sách ${money(Math.abs(budget.remainingSafetyMargin))}. Bạn có thể điều chỉnh tại trang Lập kế hoạch.` : `Bạn còn ${money(budget.remainingSafetyMargin)} để dự phòng cho chi phí phát sinh.`}
+          </p>
+        </div>
       </div>
-
-      <div role={isOverBudget ? 'alert' : undefined} className={`mt-3 rounded-xl border p-3 text-sm ${isOverBudget ? 'border-rose-200 bg-rose-50 text-rose-800' : 'border-slate-100 bg-slate-50 text-slate-600'}`}>
-        {isOverBudget ? '⚠️' : '🛡️'} <span className="font-semibold">{isOverBudget ? 'Vượt ngân sách:' : 'Dự phòng rủi ro:'}</span>{' '}
-        <span className={`font-bold ${isOverBudget ? 'text-rose-700' : 'text-emerald-600'}`}>
-          {Math.abs(budget.remainingSafetyMargin).toLocaleString('vi-VN')} VNĐ
-        </span>{' '}
-        {isOverBudget ? 'cần được cắt giảm khỏi kế hoạch.' : 'còn lại cho các chi phí phát sinh.'}
-      </div>
-    </div>
+      <dl className="mt-8 grid gap-5 border-t border-line pt-6 sm:grid-cols-3">
+        {[
+          ['Ngân sách', money(totalBudget)],
+          ['Chi phí dự kiến', money(spent)],
+          [isOverBudget ? 'Vượt ngân sách' : 'Còn lại', money(Math.abs(budget.remainingSafetyMargin))],
+        ].map(([label, value]) => <div key={label}><dt className="text-xs text-muted">{label}</dt><dd className="mt-2 text-lg font-semibold">{value}</dd></div>)}
+      </dl>
+    </section>
   );
-};
+}

@@ -1,4 +1,9 @@
-import { PlanTripRequest, PlanTripResponse } from '../types/trip';
+import { PlanTripRequest, PlanTripResponse, TransportOptionData } from '../types/trip';
+
+interface TransportOptionResponse extends Omit<TransportOptionData, 'isParetoOptimal'> {
+  isParetoOptimal?: boolean;
+  paretoOptimal?: boolean;
+}
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
@@ -15,7 +20,14 @@ export async function fetchPlanTrip(req: PlanTripRequest): Promise<PlanTripRespo
     throw new Error(`Máy chủ phản hồi lỗi ${response.status}.`);
   }
 
-  return await response.json();
+  const result: Omit<PlanTripResponse, 'transportOptions'> & { transportOptions: TransportOptionResponse[] } = await response.json();
+  return {
+    ...result,
+    transportOptions: result.transportOptions.map(({ paretoOptimal, isParetoOptimal, ...option }) => ({
+      ...option,
+      isParetoOptimal: isParetoOptimal ?? paretoOptimal ?? false,
+    })),
+  };
 }
 
 export function getFallbackResponse(): PlanTripResponse {
@@ -69,6 +81,25 @@ export function getFallbackResponse(): PlanTripResponse {
           { time: '08:00', title: 'Ăn sáng Bánh mì xíu mại Hoàng Diệu', costVnd: 40000, durationHours: 1.0 },
           { time: '09:30', title: 'Dạo quanh Hồ Xuân Hương', costVnd: 0, durationHours: 1.5 },
           { time: '18:30', title: 'Khám phá Chợ Đêm Đà Lạt & Lẩu gà lá é', costVnd: 180000, durationHours: 2.5 },
+        ],
+      },
+      {
+        day: 2,
+        title: 'Rừng thông, cà phê & những con dốc',
+        activities: [
+          { time: '08:00', title: 'Ăn sáng và cà phê trong khu Hòa Bình', costVnd: 90000, durationHours: 1.5 },
+          { time: '10:00', title: 'Tham quan Dinh Bảo Đại', costVnd: 60000, durationHours: 2.0 },
+          { time: '14:30', title: 'Dạo rừng thông và ngắm hoàng hôn ngoại ô', costVnd: 120000, durationHours: 3.0 },
+          { time: '19:00', title: 'Bữa tối với món địa phương', costVnd: 220000, durationHours: 2.0 },
+        ],
+      },
+      {
+        day: 3,
+        title: 'Một buổi sáng chậm trước khi về',
+        activities: [
+          { time: '08:00', title: 'Đi bộ quanh Hồ Xuân Hương', costVnd: 0, durationHours: 1.0 },
+          { time: '09:30', title: 'Ghé chợ mua đặc sản địa phương', costVnd: 180000, durationHours: 1.5 },
+          { time: '11:30', title: 'Ăn trưa và chuẩn bị hành lý', costVnd: 160000, durationHours: 1.5 },
         ],
       },
     ],

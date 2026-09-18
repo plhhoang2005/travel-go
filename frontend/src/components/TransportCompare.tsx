@@ -1,83 +1,28 @@
-import React from 'react';
+import { Bus, Clock3, Plane, Star, TrainFront } from 'lucide-react';
 import { TransportOptionData } from '../types/trip';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-interface TransportCompareProps {
-  options: TransportOptionData[];
-}
+interface TransportCompareProps { options: TransportOptionData[]; }
+const modeIcons = { may_bay: Plane, tau_lua: TrainFront, xe_khach: Bus };
+const tradeoffLabels: Record<string, string> = { cheapest: 'Tiết kiệm nhất', fastest: 'Nhanh nhất', balanced: 'Cân bằng nhất', comfortable: 'Thoải mái nhất' };
 
-export const TransportCompare: React.FC<TransportCompareProps> = ({ options }) => {
-  const chartData = options.map((opt) => ({
-    name: opt.displayName.split(' ')[0] || opt.mode,
-    'Chi phí (k VNĐ)': Math.round(opt.priceTotalVnd / 1000),
-    'Thời gian (h)': opt.durationHours,
-    'Độ thoải mái': opt.comfortScore,
-  }));
-
+export function TransportCompare({ options }: TransportCompareProps) {
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
-      <h3 className="text-base font-bold text-slate-800 mb-2 flex items-center gap-2">
-        <span>🚆</span> So Sánh Tradeoff Phương Tiện (Pareto Optimizer)
-      </h3>
-      <p className="text-xs text-slate-500 mb-4">
-        Phân tích đánh đổi giữa Giá tiền vs Thời gian di chuyển vs Độ thoải mái
-      </p>
-
-      {/* Chart */}
-      <div className="h-48 w-full mb-4">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} />
-            <YAxis yAxisId="cost" stroke="#059669" fontSize={11} />
-            <YAxis yAxisId="time" orientation="right" stroke="#2563eb" fontSize={11} />
-            <Tooltip formatter={(value: number, name: string) => name.includes('Chi phí') ? [`${value.toLocaleString('vi-VN')} nghìn VNĐ`, name] : [`${value} giờ`, name]} />
-            <Legend wrapperStyle={{ fontSize: '12px' }} />
-            <Bar yAxisId="cost" dataKey="Chi phí (k VNĐ)" fill="#059669" radius={[4, 4, 0, 0]} />
-            <Bar yAxisId="time" dataKey="Thời gian (h)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs text-left">
-          <thead className="bg-slate-50 text-slate-500 font-semibold border-b">
-            <tr>
-              <th className="p-2">Phương tiện</th>
-              <th className="p-2">Tổng chi phí</th>
-              <th className="p-2">Thời gian</th>
-              <th className="p-2">Thoải mái</th>
-              <th className="p-2">Đánh giá Pareto</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {options.map((opt) => (
-              <React.Fragment key={opt.mode}>
-              <tr className={opt.isParetoOptimal ? 'bg-emerald-50/40' : ''}>
-                <td className="p-2 font-medium text-slate-700">{opt.displayName}</td>
-                <td className="p-2 font-bold text-emerald-600">{opt.priceTotalVnd.toLocaleString('vi-VN')} đ</td>
-                <td className="p-2">{opt.durationHours} giờ</td>
-                <td className="p-2">{'⭐'.repeat(Math.min(5, Math.round(opt.comfortScore / 2)))}</td>
-                <td className="p-2 text-slate-600">
-                  {opt.isParetoOptimal ? (
-                    <span className="inline-flex items-center text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded">
-                      Pareto Optimal ({opt.tradeoffType})
-                    </span>
-                  ) : (
-                    <span className="text-slate-400">Thường</span>
-                  )}
-                </td>
-              </tr>
-              {opt.recommendationReason && (
-                <tr className={opt.isParetoOptimal ? 'bg-emerald-50/40' : ''}>
-                  <td colSpan={5} className="px-2 pb-3 text-sm text-slate-600">{opt.recommendationReason}</td>
-                </tr>
-              )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <section className="content-section">
+      <div className="section-heading"><p className="eyebrow">Đi lại thuận tiện</p><h2>Chọn cách di chuyển</h2><p>So sánh chi phí, thời gian và mức độ thoải mái cho hành trình.</p></div>
+      {options?.length ? <div className="grid gap-3 lg:grid-cols-3">{options.map((option) => {
+        const Icon = modeIcons[option.mode as keyof typeof modeIcons] || Bus;
+        return <article key={option.mode} className={`transport-card ${option.isParetoOptimal ? 'is-recommended' : ''}`}>
+          <div className="flex items-start justify-between gap-3"><span className="icon-box"><Icon size={21} /></span>{option.isParetoOptimal && <span className="subtle-badge">Lựa chọn tốt</span>}</div>
+          <h3 className="mt-5 text-lg font-semibold text-ink">{option.displayName}</h3>
+          <p className="mt-2 text-2xl font-semibold tracking-tight text-brand">{option.priceTotalVnd.toLocaleString('vi-VN')}đ</p>
+          <dl className="mt-5 space-y-2 border-t border-line pt-4 text-sm">
+            <div className="flex justify-between"><dt className="flex items-center gap-2 text-muted"><Clock3 size={15} />Thời gian</dt><dd className="font-medium text-ink">{option.durationHours} giờ</dd></div>
+            <div className="flex justify-between"><dt className="flex items-center gap-2 text-muted"><Star size={15} />Thoải mái</dt><dd className="font-medium text-ink">{option.comfortScore}/10</dd></div>
+          </dl>
+          <p className="mt-4 text-sm leading-6 text-muted">{option.recommendationReason}</p>
+          <p className="mt-3 text-xs font-medium text-brand">{tradeoffLabels[option.tradeoffType] || option.tradeoffType}</p>
+        </article>;
+      })}</div> : <p className="empty-copy">Chưa có phương tiện phù hợp.</p>}
+    </section>
   );
-};
+}
