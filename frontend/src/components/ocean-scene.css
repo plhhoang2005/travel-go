@@ -1,0 +1,33 @@
+.ocean-scene { position: relative; min-width: 0; width: 100%; max-width: 650px; margin-inline: auto; perspective: 1000px; --tilt-x: 0deg; --tilt-y: 0deg; }
+.scene-tilt { position: relative; transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y)); transform-style: preserve-3d; transition: transform 300ms ease-out; }
+.island-diorama { display: block; width: 100%; height: auto; overflow: visible; }
+.scene-cloud { animation: cloud-drift 8s ease-in-out infinite alternate; }
+.cloud-two { animation-delay: -4s; animation-duration: 7s; }
+.scene-plane { animation: plane-glide 7s ease-in-out infinite alternate; }
+.scene-boat { animation: boat-sway 6s ease-in-out infinite alternate; transform-origin: 179px 334px; }
+.scene-waves { animation: wave-drift 5s ease-in-out infinite alternate; }
+.scene-pin { animation: pin-float 6s ease-in-out infinite alternate; }
+.scene-caption { position: absolute; left: 4%; bottom: 2%; display: flex; align-items: center; gap: 12px; padding: 14px 18px; border: 1px solid #d8eaf3; border-radius: 12px; background: #fff; box-shadow: 0 5px 0 #e0eef3, 0 10px 24px #12324a08; transform: translateZ(20px) rotate(-3deg); }
+.scene-caption strong { display: block; color: #12324a; font-size: 13px; font-weight: 650; }
+.scene-caption span:not(.scene-caption-mark) { display: block; margin-top: 4px; color: #5e7a8a; font-size: 11px; }
+.scene-caption-mark { width: 28px; height: 28px; border: 6px solid #f9e7a8; border-radius: 50%; background: #f6c98b; flex-shrink: 0; }
+.scene-motion-toggle { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 24px auto 0; min-height: 32px; border-radius: 6px; color: #507284; font-size: 11px; padding: 4px 8px; }
+.scene-motion-toggle:hover { background: #ddf4ff; }
+.is-paused svg * { animation-play-state: paused !important; }
+@keyframes cloud-drift { from { transform: translateX(-5px); } to { transform: translateX(7px); } }
+@keyframes plane-glide { from { transform: translate(-7px, -3px); } to { transform: translate(7px, 3px); } }
+@keyframes boat-sway { from { transform: translateY(-2px) rotate(-1deg); } to { transform: translateY(2px) rotate(1deg); } }
+@keyframes wave-drift { from { transform: translateX(-3px); opacity: .55; } to { transform: translateX(3px); opacity: 1; } }
+@keyframes pin-float { from { transform: translateY(-2px); } to { transform: translateY(2px); } }
+@media (max-width: 639px) {
+  .scene-caption { left: 5%; bottom: 0; padding: 10px 12px; gap: 8px; }
+  .scene-caption strong { font-size: 11px; }
+  .scene-caption span:not(.scene-caption-mark) { font-size: 10px; }
+  .scene-caption-mark { width: 23px; height: 23px; border-width: 5px; }
+  .scene-motion-toggle { margin-top: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ocean-scene svg * { animation: none !important; }
+  .scene-tilt { transform: none !important; transition: none; }
+  .scene-motion-toggle { display: none; }
+}

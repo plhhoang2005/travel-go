@@ -1,180 +1,67 @@
-import React from 'react';
+import { Search } from 'lucide-react';
 import { PlanTripRequest } from '../types/trip';
 
 interface TripFormProps {
   request: PlanTripRequest;
   onChange: (req: PlanTripRequest) => void;
   onSubmit: () => void;
-  onApplyPreset: (presetId: number) => void;
   loading: boolean;
+  departureDate: string;
+  onDateChange: (date: string) => void;
 }
+const preferences = [
+  ['mountain', 'Núi & thiên nhiên'], ['beach', 'Biển & đảo'], ['food', 'Ẩm thực'],
+  ['seafood', 'Hải sản'], ['romantic', 'Lãng mạn'], ['resort', 'Nghỉ dưỡng'], ['quick-trip', 'Chuyến đi ngắn'],
+];
+const groups = [['Một mình', 1], ['Cặp đôi', 2], ['Bạn bè', 3], ['Gia đình', 4]] as const;
 
-export const TripForm: React.FC<TripFormProps> = ({
-  request,
-  onChange,
-  onSubmit,
-  onApplyPreset,
-  loading,
-}) => {
-  const preferencesList = [
-    { id: 'mountain', label: '⛰️ Núi & Đồi' },
-    { id: 'beach', label: '🏖️ Biển & Đảo' },
-    { id: 'food', label: '🍜 Ẩm thực' },
-    { id: 'romantic', label: '🌸 Lãng mạn' },
-    { id: 'resort', label: '🏨 Nghỉ dưỡng' },
-  ];
-
-  const togglePref = (id: string) => {
-    const current = request.preferences;
-    const updated = current.includes(id)
-      ? current.filter((p) => p !== id)
-      : [...current, id];
-    onChange({ ...request, preferences: updated });
-  };
+export function TripForm({ request, onChange, onSubmit, loading, departureDate, onDateChange }: TripFormProps) {
+  const toggle = (id: string) => onChange({
+    ...request,
+    preferences: request.preferences.includes(id) ? request.preferences.filter((item) => item !== id) : [...request.preferences, id],
+  });
+  const valid = request.preferences.length > 0 && request.budgetVnd >= 1000000 && Number.isFinite(request.budgetVnd);
+  const today = new Date();
+  const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-          <span>⚙️</span> Thông tin Chuyến đi
-        </h2>
-        
-        {/* Presets Quick Fill */}
-        <div className="flex gap-2">
-          <button
-            onClick={() => onApplyPreset(1)}
-            className="text-xs px-2.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-medium"
-          >
-            📍 Demo 1: Đà Lạt
-          </button>
-          <button
-            onClick={() => onApplyPreset(2)}
-            className="text-xs px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-medium"
-          >
-            📍 Demo 2: Phú Quốc
-          </button>
-          <button
-            onClick={() => onApplyPreset(3)}
-            className="text-xs px-2.5 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-medium"
-          >
-            📍 Demo 3: Vũng Tàu
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        {/* Origin */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">
-            Xuất phát từ
+    <form onSubmit={(event) => { event.preventDefault(); if (valid && !loading) onSubmit(); }} aria-busy={loading}>
+      <fieldset disabled={loading} className="min-w-0">
+        <legend className="sr-only">Thông tin chuyến đi</legend>
+        <div className="travel-search-grid">
+          <label className="travel-field"><span>Xuất phát từ</span>
+            <select value={request.origin} onChange={(e) => onChange({ ...request, origin: e.target.value })}>
+              <option value="Ho Chi Minh">TP. Hồ Chí Minh</option><option value="Ha Noi">Hà Nội</option><option value="Da Nang">Đà Nẵng</option>
+            </select>
           </label>
-          <select
-            value={request.origin}
-            onChange={(e) => onChange({ ...request, origin: e.target.value })}
-            className="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none"
-          >
-            <option value="Ho Chi Minh">TP. Hồ Chí Minh</option>
-            <option value="Ha Noi">Hà Nội</option>
-            <option value="Da Nang">Đà Nẵng</option>
-          </select>
+          <label className="travel-field"><span>Ngày đi dự kiến</span><input type="date" min={minDate} value={departureDate} onChange={(e) => onDateChange(e.target.value)} aria-describedby="date-note" /></label>
+          <label className="travel-field"><span>Số ngày</span><select value={request.numDays} onChange={(e) => onChange({ ...request, numDays: Number(e.target.value) })}>{[2, 3, 4, 5].map((n) => <option key={n} value={n}>{n} ngày</option>)}</select></label>
+          <label className="travel-field"><span>Số người</span><select value={request.numPeople} onChange={(e) => onChange({ ...request, numPeople: Number(e.target.value) })}>{[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} người</option>)}</select></label>
+          <label className="travel-field"><span>Ngân sách (VNĐ)</span><input type="number" inputMode="numeric" required min={1000000} max={100000000} step={500000} value={request.budgetVnd || ''} onChange={(e) => onChange({ ...request, budgetVnd: Number(e.target.value) })} /></label>
+          <button type="submit" disabled={!valid || loading} className="button-primary flex items-center justify-center gap-2 px-3"><Search size={17} aria-hidden="true" />{loading ? 'Đang lập...' : 'Lập kế hoạch'}</button>
         </div>
+        <p id="date-note" className="mt-3 text-xs leading-5 text-muted">Ngày đi được lưu cùng lịch trình để bạn tham khảo. Chi phí và thời tiết chưa thay đổi theo ngày chọn.</p>
 
-        {/* Num Days */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">
-            Số ngày di chuyển: <span className="text-emerald-600 font-bold">{request.numDays} ngày</span>
+        <div className="mt-6 grid gap-6 border-t border-line pt-6 lg:grid-cols-[1fr_auto]">
+          <fieldset className="min-w-0">
+            <legend className="mb-3 text-sm font-semibold text-ink">Bạn thích điều gì?</legend>
+            <div className="flex flex-wrap gap-2">
+              {preferences.map(([id, label]) => <button key={id} type="button" aria-pressed={request.preferences.includes(id)} onClick={() => toggle(id)} className={`preference-chip ${request.preferences.includes(id) ? 'is-selected' : ''}`}>{label}</button>)}
+            </div>
+            {!request.preferences.length && <p role="alert" className="mt-3 text-sm text-rose-700">Hãy chọn ít nhất một sở thích.</p>}
+          </fieldset>
+          <label className="text-sm font-semibold text-ink">Mức độ ưu tiên
+            <select value={request.priority} onChange={(e) => onChange({ ...request, priority: e.target.value as PlanTripRequest['priority'] })} className="mt-3 block w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm font-normal lg:w-44">
+              <option value="balanced">Cân bằng</option><option value="cheapest">Tiết kiệm chi phí</option><option value="fastest">Tiết kiệm thời gian</option><option value="comfortable">Thoải mái</option>
+            </select>
           </label>
-          <input
-            type="range"
-            min="2"
-            max="5"
-            value={request.numDays}
-            onChange={(e) => onChange({ ...request, numDays: Number(e.target.value) })}
-            className="w-full accent-emerald-600"
-          />
         </div>
-
-        {/* Num People */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 mb-1">
-            Số người đi: <span className="text-emerald-600 font-bold">{request.numPeople} người</span>
-          </label>
-          <input
-            type="range"
-            min="1"
-            max="6"
-            value={request.numPeople}
-            onChange={(e) => onChange({ ...request, numPeople: Number(e.target.value) })}
-            className="w-full accent-emerald-600"
-          />
+        <div className="mt-5 flex flex-wrap items-center gap-2 text-xs">
+          <span className="mr-2 font-medium text-muted">Nhóm đi · gợi ý số người:</span>
+          {groups.map(([label, number]) => <button key={label} type="button" onClick={() => onChange({ ...request, numPeople: number })} className="rounded-md px-2 py-1.5 text-brand underline decoration-ocean-200 underline-offset-4 hover:bg-ocean-50">{label} ({number})</button>)}
         </div>
-      </div>
-
-      {/* Budget Slider */}
-      <div className="mb-4 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
-        <div className="flex justify-between items-center mb-1">
-          <label className="text-xs font-semibold text-emerald-800">
-            Ngân sách tổng cộng
-          </label>
-          <span className="text-lg font-extrabold text-emerald-600">
-            {request.budgetVnd.toLocaleString('vi-VN')} VNĐ
-          </span>
-        </div>
-        <input
-          type="range"
-          min="1000000"
-          max="15000000"
-          step="500000"
-          value={request.budgetVnd}
-          onChange={(e) => onChange({ ...request, budgetVnd: Number(e.target.value) })}
-          className="w-full accent-emerald-600 cursor-pointer"
-        />
-        <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-          <span>1.000.000 VNĐ</span>
-          <span>5.000.000 VNĐ</span>
-          <span>10.000.000 VNĐ</span>
-          <span>15.000.000 VNĐ</span>
-        </div>
-      </div>
-
-      {/* Preferences Chips */}
-      <div className="mb-5">
-        <label className="block text-xs font-semibold text-slate-500 mb-2">
-          Sở thích du lịch
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {preferencesList.map((pref) => {
-            const selected = request.preferences.includes(pref.id);
-            return (
-              <button
-                key={pref.id}
-                type="button"
-                onClick={() => togglePref(pref.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  selected
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {pref.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Submit Button */}
-      <button
-        onClick={onSubmit}
-        disabled={loading}
-        className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <span>⏳ Đang phân tích Decision Engine...</span>
-        ) : (
-          <span>🚀 Phân Tích & Phân Bổ Chuyến Đi</span>
-        )}
-      </button>
-    </div>
+      </fieldset>
+      {loading && <p className="mt-4 text-sm text-brand" role="status">Đang lập kế hoạch chuyến đi…</p>}
+    </form>
   );
-};
+}

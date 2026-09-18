@@ -1,161 +1,129 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { fetchPlanTrip, getFallbackResponse } from './api/tripApi';
+import { DemoBanner } from './components/DemoBanner';
+import { Footer } from './components/Footer';
+import { Header } from './components/Header';
+import { HomePage } from './pages/HomePage';
+import { ItineraryPage } from './pages/ItineraryPage';
+import { PlannerPage } from './pages/PlannerPage';
+import { DestinationsPage } from './pages/DestinationsPage';
+import { TransportPage } from './pages/TransportPage';
+import { ServicePage } from './pages/ServicePage';
 import { PlanTripRequest, PlanTripResponse } from './types/trip';
-import { fetchPlanTrip } from './api/tripApi';
-import { TripForm } from './components/TripForm';
-import { DestinationCard } from './components/DestinationCard';
-import { TransportCompare } from './components/TransportCompare';
-import { BudgetChart } from './components/BudgetChart';
-import { ItineraryTimeline } from './components/ItineraryTimeline';
-import { AiExplanationBox } from './components/AiExplanationBox';
+
+const BudgetPage = lazy(() => import('./pages/BudgetPage').then((module) => ({ default: module.BudgetPage })));
+const initialRequest: PlanTripRequest = {
+  origin: 'Ho Chi Minh', numDays: 3, numPeople: 2, budgetVnd: 4000000,
+  preferences: ['mountain', 'food', 'romantic'], priority: 'balanced',
+};
+const pageTitles: Record<string, string> = {
+  '/': 'Khám phá Việt Nam theo cách của bạn', '/planner': 'Lập kế hoạch', '/destinations': 'Khám phá Việt Nam',
+  '/transport': 'Phương tiện', '/budget': 'Ngân sách', '/itinerary': 'Lịch trình', '/about': 'Giới thiệu',
+};
 
 export default function App() {
-  const [request, setRequest] = useState<PlanTripRequest>({
-    origin: 'Ho Chi Minh',
-    numDays: 3,
-    numPeople: 2,
-    budgetVnd: 4000000,
-    preferences: ['mountain', 'food', 'romantic'],
-    priority: 'balanced',
-  });
-
+  const location = useLocation();
+  const { pathname } = location;
+  const [displayLocation, setDisplayLocation] = useState(location);
+  const [pageExiting, setPageExiting] = useState(false);
+  const [request, setRequest] = useState(initialRequest);
+  const [plannedRequest, setPlannedRequest] = useState(initialRequest);
+  const [departureDate, setDepartureDate] = useState('');
+  const [plannedDate, setPlannedDate] = useState('');
   const [response, setResponse] = useState<PlanTripResponse | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isDemoData, setIsDemoData] = useState(false);
+  const pending = useRef(false);
 
-  const handleSubmit = async () => {
+  useEffect(() => {
+    document.title = `${pageTitles[pathname] || 'Khám phá'} | TravelGO`;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (location.key === displayLocation.key) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      setDisplayLocation(location);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return;
+    }
+    setPageExiting(true);
+    const timer = window.setTimeout(() => {
+      setDisplayLocation(location);
+      setPageExiting(false);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }, 180);
+    return () => window.clearTimeout(timer);
+  }, [location, displayLocation.key]);
+
+  const submitPlan = async (nextRequest: PlanTripRequest = request) => {
+    if (pending.current) return;
+    pending.current = true;
     setLoading(true);
+    setError(null);
+    const snapshot = { ...nextRequest, preferences: [...nextRequest.preferences] };
     try {
-      const res = await fetchPlanTrip(request);
-      setResponse(res);
-    } catch (e) {
-      console.error('Error fetching plan:', e);
+      const result = await fetchPlanTrip(snapshot);
+      setResponse(result);
+      setPlannedRequest(snapshot);
+      setPlannedDate(departureDate);
+      setIsDemoData(false);
+    } catch {
+      setError('Không thể tạo kế hoạch chuyến đi. Vui lòng kiểm tra kết nối và thử lại.');
     } finally {
+      pending.current = false;
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    handleSubmit();
-  }, []);
-
-  const handleApplyPreset = (presetId: number) => {
-    if (presetId === 1) {
-      // Đà Lạt
-      const p1: PlanTripRequest = {
-        origin: 'Ho Chi Minh',
-        numDays: 3,
-        numPeople: 2,
-        budgetVnd: 4000000,
-        preferences: ['mountain', 'food', 'romantic'],
-        priority: 'balanced',
-      };
-      setRequest(p1);
-    } else if (presetId === 2) {
-      // Phú Quốc
-      const p2: PlanTripRequest = {
-        origin: 'Ho Chi Minh',
-        numDays: 4,
-        numPeople: 3,
-        budgetVnd: 8000000,
-        preferences: ['beach', 'resort', 'seafood'],
-        priority: 'comfortable',
-      };
-      setRequest(p2);
-    } else if (presetId === 3) {
-      // Vũng Tàu
-      const p3: PlanTripRequest = {
-        origin: 'Ho Chi Minh',
-        numDays: 2,
-        numPeople: 2,
-        budgetVnd: 1500000,
-        preferences: ['beach', 'food', 'quick-trip'],
-        priority: 'cheapest',
-      };
-      setRequest(p3);
-    }
+  const useDemoData = () => {
+    const demo = getFallbackResponse();
+    setResponse(demo);
+    setPlannedRequest({ ...initialRequest, preferences: [...initialRequest.preferences] });
+    setPlannedDate('');
+    setIsDemoData(true);
+    setError(null);
+  };
+  const shared = { request: plannedRequest, response };
+  const plannerProps = {
+    request, onChange: setRequest, onSubmit: submitPlan, loading, error, onUseDemo: useDemoData,
+    response, plannedRequest, departureDate, onDateChange: setDepartureDate, plannedDate,
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 pb-12">
-      {/* Header */}
-      <header className="bg-slate-900 text-white py-4 px-6 shadow-md border-b border-slate-800">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-xl font-black text-white shadow-lg">
-              TG
-            </div>
-            <div>
-              <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                TravelGO <span className="text-xs bg-emerald-500/20 text-emerald-400 font-mono px-2 py-0.5 rounded border border-emerald-500/30">v1.0 MVP</span>
-              </h1>
-              <p className="text-xs text-slate-400">
-                Smart Travel & Mobility Decision Intelligence — MLAI Hackathon 2026 (Track C)
-              </p>
-            </div>
+    <div id="top" className="flex min-h-screen flex-col bg-canvas text-ink">
+      <Header />
+      <main id="main-content" className="min-w-0 flex-1">
+        {isDemoData && displayLocation.pathname !== '/' && <DemoBanner />}
+        <Suspense fallback={<p className="page-shell py-16 text-muted" role="status">Đang mở trang…</p>}>
+          <div key={displayLocation.key} className={`page-stage ${pageExiting ? 'is-exiting' : ''}`}>
+            <Routes location={displayLocation}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/planner" element={<PlannerPage {...plannerProps} />} />
+            <Route path="/destinations" element={<DestinationsPage {...shared} />} />
+            <Route path="/transport" element={<TransportPage {...shared} />} />
+            <Route path="/budget" element={<BudgetPage {...shared} />} />
+            <Route path="/itinerary" element={<ItineraryPage {...shared} departureDate={plannedDate} />} />
+            <Route path="/hotels" element={<ServicePage type="hotel" />} />
+            <Route path="/food" element={<ServicePage type="food" />} />
+            <Route path="/tips" element={<ServicePage type="tips" />} />
+            <Route path="/about" element={<ServicePage type="about" />} />
+            <Route path="/lap-ke-hoach" element={<Navigate to="/planner" replace />} />
+            <Route path="/ket-qua" element={<Navigate to="/destinations" replace />} />
+            <Route path="/di-chuyen" element={<Navigate to="/transport" replace />} />
+            <Route path="/ngan-sach" element={<Navigate to="/budget" replace />} />
+            <Route path="/lich-trinh" element={<Navigate to="/itinerary" replace />} />
+            <Route path="/khach-san" element={<Navigate to="/hotels" replace />} />
+            <Route path="/an-uong" element={<Navigate to="/food" replace />} />
+            <Route path="/goi-y" element={<Navigate to="/tips" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
           </div>
-
-          <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 font-mono">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            System Online
-          </div>
-        </div>
-      </header>
-
-      {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Form Controls */}
-        <div className="lg:col-span-4 space-y-6">
-          <TripForm
-            request={request}
-            onChange={setRequest}
-            onSubmit={handleSubmit}
-            onApplyPreset={handleApplyPreset}
-            loading={loading}
-          />
-        </div>
-
-        {/* Right Column: Output Dashboard */}
-        <div className="lg:col-span-8 space-y-6">
-          {response ? (
-            <>
-              {/* Top 3 Destination Cards */}
-              <div>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
-                  <span>🎯</span> Xếp Hạng Điểm Đến Tối Ưu (MCDA Engine)
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {response.topDestinations.map((dest) => (
-                    <DestinationCard
-                      key={dest.id}
-                      destination={dest}
-                      isWinner={dest.id === response.winnerId}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {/* Grid 2 Columns: Transport & Budget */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <TransportCompare options={response.transportOptions} />
-                <BudgetChart budget={response.budgetBreakdown} />
-              </div>
-
-              {/* Itinerary Timeline */}
-              <ItineraryTimeline days={response.itineraryDays} />
-
-              {/* AI Explanation Box */}
-              <AiExplanationBox
-                explanation={response.aiExplanation}
-                dataSources={response.dataSources}
-                assumptions={response.assumptions}
-              />
-            </>
-          ) : (
-            <div className="bg-white p-12 rounded-2xl shadow-sm border text-center text-slate-400">
-              ⏳ Đang tải dữ liệu Decision Intelligence...
-            </div>
-          )}
-        </div>
+        </Suspense>
       </main>
+      <Footer />
     </div>
   );
 }

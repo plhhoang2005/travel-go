@@ -1,54 +1,14 @@
-import React from 'react';
+interface AiExplanationBoxProps { explanation: string; dataSources: Record<string, string>; assumptions: string[]; }
 
-interface AiExplanationBoxProps {
-  explanation: string;
-  dataSources: Record<string, string>;
-  assumptions: string[];
-}
-
-export const AiExplanationBox: React.FC<AiExplanationBoxProps> = ({
-  explanation,
-  dataSources,
-  assumptions,
-}) => {
+export function AiExplanationBox({ explanation, dataSources, assumptions }: AiExplanationBoxProps) {
   return (
-    <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md border border-slate-700">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-xl">🤖</span>
-          <h3 className="font-bold text-base text-emerald-400">
-            Giải Thích Từ AI (LLM Explanation Layer)
-          </h3>
-        </div>
-
-        {/* Data Source Badges */}
-        <div className="flex gap-2">
-          {Object.entries(dataSources || {}).map(([key, val]) => (
-            <span
-              key={key}
-              className="text-[10px] bg-slate-700/80 text-emerald-300 px-2 py-0.5 rounded border border-slate-600 font-mono"
-            >
-              {val.includes('Live') ? '🌤️ LIVE' : 'ℹ️ MOCK'}: {val}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <p className="text-sm text-slate-200 leading-relaxed mb-4 bg-slate-800/60 p-3.5 rounded-xl border border-slate-700/50">
-        "{explanation}"
-      </p>
-
-      {/* Assumptions */}
-      {assumptions && assumptions.length > 0 && (
-        <div className="text-xs text-slate-400 border-t border-slate-700/60 pt-3">
-          <span className="font-semibold text-amber-400">⚠️ Giả định & Cảnh báo bất định:</span>
-          <ul className="list-disc list-inside mt-1 space-y-0.5">
-            {assumptions.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+    <section className="content-section">
+      <div className="section-heading"><p className="eyebrow">Một đề xuất có thể giải thích</p><h2>Vì sao TravelGO đề xuất chuyến đi này?</h2></div>
+      <blockquote className="max-w-4xl border-l-2 border-brand pl-6 text-lg leading-8 text-ink">{explanation}</blockquote>
+      <details className="mt-8 border-t border-line pt-5"><summary className="cursor-pointer text-sm font-semibold text-ink">Nguồn dữ liệu & thông tin cần lưu ý</summary>
+        <div className="mt-5 grid gap-6 text-sm text-muted md:grid-cols-2"><div><h3 className="font-semibold text-ink">Dữ liệu được xem xét</h3><ul className="mt-3 space-y-2">{Object.entries(dataSources || {}).map(([key, value]) => <li key={key} className="flex justify-between gap-4 border-b border-line pb-2"><span className="capitalize">{key}</span><span className="text-right text-ink">{value}</span></li>)}</ul></div>
+          {assumptions?.length > 0 && <div><h3 className="font-semibold text-ink">Thông tin cần lưu ý</h3><ul className="mt-3 list-disc space-y-2 pl-5">{assumptions.map((item) => <li key={item}>{item}</li>)}</ul></div>}</div>
+      </details>
+    </section>
   );
-};
+}
