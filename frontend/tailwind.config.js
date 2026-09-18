@@ -3,6 +3,9 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['"Times New Roman"', '"Noto Serif"', 'serif'],
+      },
       colors: {
         ocean: { 50: '#EEF7F7', 100: '#DEEFEF', 200: '#C0DFE2', 300: '#95C6CC', 400: '#63A5AF', 500: '#3E8FA0', 600: '#2F7F8F', 700: '#276775', 800: '#214F59', 900: '#183238' },
         sun: { 50: '#FFF9F0', 100: '#F7ECDD', 200: '#EED8B6', 300: '#E8B56B' },
