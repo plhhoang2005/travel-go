@@ -12,7 +12,7 @@ Tập hợp toàn bộ các quy chuẩn kỹ thuật bắt buộc tuân thủ đ
 - **Zero Guessing**: Tuyệt đối không tự ý giả định các yêu cầu nghiệp vụ quan trọng hoặc các tham số toán học cốt lõi.
 
 ### 1.2. Tối Thiểu Hóa Thay Đổi (Minimal Viable Change)
-- Chỉ sửa đúng các file và dòng code cần thiết để hoàn thành nhiệm vụ được giao.
+- Chỉ sửa đúng các file và dòng code cần thiết để hoàn thành nhiệm vụ được giao (tối đa 5 file/task).
 - Tuyệt đối không tự ý "tiện tay" refactor, format lại code, hoặc đổi tên biến ở các module ngoài phạm vi task.
 - Bảo toàn comment, docstring và các quy ước code hiện hữu trong file được chỉnh sửa.
 
@@ -82,8 +82,37 @@ Tập hợp toàn bộ các quy chuẩn kỹ thuật bắt buộc tuân thủ đ
 - Kiểm thử biên: Ngân sách tối thiểu (0 VNĐ, số âm), số ngày đi = 0, danh sách POI rỗng.
 - Khi sửa bug: Bắt buộc viết test case tái hiện lỗi trước khi sửa mã nguồn.
 
-### 4.2. Lệnh Kiểm Chứng Bắt Buộc Trước Bàn Giao
-Trước khi xuất báo cáo hoàn thành nhiệm vụ, Agent bắt buộc phải chạy và kiểm chứng:
-- **Backend**: `mvn clean test` (hoặc compile check).
+### 4.2. Tính Bất Biến Của Kiểm Thử (Test Integrity)
+- ❌ Cấm Agent sửa, xóa hoặc làm yếu các câu lệnh assertion trong `src/test/` để làm test pass giả tạo.
+- ❌ Cấm bọc khối `catch (Exception e) {}` rỗng để giấu lỗi.
+- ❌ Cấm hard-code kết quả chỉ để vượt qua một test case đơn lẻ.
+
+### 4.3. Lệnh Kiểm Chứng Bắt Buộc Trước Bàn Giao
+Trước khi xuất báo cáo hoặc tạo commit, Agent bắt buộc phải chạy và kiểm chứng:
+- **Backend**: `./mvnw test` (hoặc `mvn test-compile`).
 - **Frontend**: `npm run build` (hoặc `npx tsc --noEmit`).
 - Không bao giờ tuyên bố hoàn thành nếu chưa có kết quả đầu ra thực tế (Observation) thành công từ các lệnh trên.
+
+---
+
+## 5. Git Safety & Version Control Rules (Quy Chuẩn An Toàn Git)
+
+### 5.1. Khóa Cứng Nhánh Chính (Branch Protection Rule)
+- ❌ **CẤM TUYỆT ĐỐI**: Commit hoặc Push trực tiếp vào nhánh `main` hoặc `develop`.
+- Mọi phát triển phải diễn ra trên nhánh feature riêng biệt: `feat/<module>-<tên>` hoặc `fix/<module>-<tên>`.
+- Quyền merge vào `main` thuộc về Human Tech Lead sau khi PR được tạo và CI kiểm định thành công.
+
+### 5.2. Selective Staging (Stage Chọn Lọc Bắt Buộc)
+- ❌ **CẤM TUYỆT ĐỐI**: `git add .`, `git add -A`, `git commit -a`.
+- Agent bắt buộc chỉ stage đích danh các file nằm trong phạm vi task: `git add <file1> <file2>`.
+- Kiểm tra `git diff --cached` để đảm bảo không lọt file `.env`, file cấu hình máy (`.vscode`, `.idea`), hoặc thư mục build (`target/`, `dist/`).
+
+### 5.3. Quy Chuẩn Conventional Commits
+- Commit message bắt buộc theo định dạng: `<type>(<scope>): <mô tả ngắn>`
+- Các type hợp lệ: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
+- Ví dụ: `feat(engine): add TOPSIS distance calculation matrix`
+
+### 5.4. Cấm Các Thao Tác Phá Hủy (Destructive Operations)
+- ❌ Cấm `git push --force`.
+- ❌ Cấm `git reset --hard` trên các commit đã push.
+- ❌ Cấm xóa nhánh từ xa (remote branch) nếu chưa có sự phê duyệt của Tech Lead.

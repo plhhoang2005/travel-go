@@ -40,16 +40,16 @@ Hệ thống tài liệu dự án được tổ chức tinh gọn thành 3 tệp
 
 | Lĩnh vực | Tài liệu bắt buộc phải đọc | Nội dung chính |
 | :--- | :--- | :--- |
-| **Quy chuẩn kỹ thuật & Luật** | [.agent/rules.md](file:///.agent/rules.md) | Core Rules, 5 Luật Bất Biến, Clean Layering, Java/TypeScript standards, Testing SOP |
+| **Quy chuẩn kỹ thuật & Luật** | [.agent/rules.md](file:///.agent/rules.md) | Core Rules, 5 Luật Bất Biến, Clean Layering, Java/TS standards, Git Safety, Testing SOP |
 | **Tri thức dự án & Bộ nhớ** | [.agent/knowledge.md](file:///.agent/knowledge.md) | Chân dung Persona Minh, 4 ADRs, Nợ kỹ thuật đã chấp nhận, Lessons Learned |
-| **Quy trình & Gatekeeper** | [.agent/workflow.md](file:///.agent/workflow.md) | SOP phát triển, Anti-Vague Prompt Gatekeeper (HIGH/MED/LOW), Debugging RCA |
+| **Quy trình & Autonomous Pipeline** | [.agent/workflow.md](file:///.agent/workflow.md) | Level 2.8 SOP, Anti-Vague Gatekeeper, Budget Guard, RCA Loop, Git Protocol, PR Gate |
 
 ---
 
 ## 4. Anti-Vague Prompt Gatekeeper (Quy Tắc Chống Yêu Cầu Mơ Hồ)
 
 Trước khi lập kế hoạch hoặc viết code, Agent bắt buộc phải đánh giá **Requirement Confidence**:
-1. 🟢 **HIGH**: Yêu cầu rõ ràng, scope rõ $\rightarrow$ Tiến hành phân tích code và lập plan.
+1. 🟢 **HIGH**: Yêu cầu rõ ràng, scope rõ $\rightarrow$ Tiến hành chu trình tự động hóa (Autonomous Execution).
 2. 🟡 **MEDIUM**: Thiếu chi tiết kỹ thuật nhỏ $\rightarrow$ **Áp dụng nguyên tắc "Codebase First"**: Tự đọc code để tìm lời giải, không hỏi người dùng.
 3. 🔴 **LOW**: Yêu cầu mơ hồ, scope mông lung, có từ 2 hướng rẽ nhánh $\rightarrow$ **DỪNG LẠI, KÍCH HOẠT PROMPT GATEKEEPER**:
    - Inspect nhanh codebase liên quan.
@@ -59,11 +59,19 @@ Trước khi lập kế hoạch hoặc viết code, Agent bắt buộc phải đ
 
 ---
 
-## 5. Mandatory Handover Report Format (Hợp Đồng Bàn Giao Cuối Task)
+## 5. Workflow Budget Guard & Git Safety
+
+- **Budget Guard**: Tối đa 25 tool calls/task, tối đa 3 vòng thử sửa lỗi (RCA loop), tối đa 5 file/task. Nếu chạm ngưỡng $\rightarrow$ Graceful Stop, lưu Checkpoint và chờ người dùng.
+- **Git Safety (Model B)**: Tự động tạo feature branch (`feat/*`, `fix/*`), selective staging (chỉ add file task), conventional commits. **CẤM TUYỆT ĐỐI PUSH TRỰC TIẾP VÀO MAIN**.
+- **Human Merge Gate**: Mọi thay đổi đưa vào `main` phải thông qua Pull Request do Human Tech Lead review và bấm Merge.
+
+---
+
+## 6. Mandatory Handover Report Format (Hợp Đồng Bàn Giao Cuối Task)
 
 Mỗi khi hoàn thành một nhiệm vụ, Agent bắt buộc phải xuất báo cáo theo đúng 5 mục:
 1. **Changed**: Danh sách file đã sửa / tạo mới kèm vai trò.
 2. **Why**: Căn cứ kỹ thuật và lý do chọn giải pháp này.
 3. **Testing**: Kết quả kiểm thử tự động hoặc lệnh đã chạy để kiểm chứng (`mvn test`, `npm run build`).
 4. **Problems**: Khó khăn kỹ thuật, rủi ro tiềm ẩn hoặc nợ kỹ thuật phát sinh.
-5. **Lesson Candidate**: Đề xuất bài học kinh nghiệm mới (nếu phát hiện cạm bẫy hoặc lỗi hệ thống đặc thù) theo cấu trúc: *Problem $\rightarrow$ Root Cause $\rightarrow$ Actionable Rule*.
+5. **Lesson Candidate**: Đề xuất bài học kinh nghiệm mới theo cấu trúc: *Problem $\rightarrow$ Root Cause $\rightarrow$ Actionable Rule*.
