@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.travelgo.model.Destination;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,6 +21,11 @@ public class TripController {
     @Autowired
     public TripController(TripPlanningService tripPlanningService) {
         this.tripPlanningService = tripPlanningService;
+    }
+
+    @GetMapping("/destinations")
+    public ResponseEntity<List<Destination>> getAllDestinations() {
+        return ResponseEntity.ok(tripPlanningService.getAllDestinations());
     }
 
     @PostMapping("/plan-trip")

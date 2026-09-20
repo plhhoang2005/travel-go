@@ -29,19 +29,22 @@ public class TripPlanningService {
     private final BudgetSimulator budgetSimulator;
     private final DataLoaderService dataLoaderService;
     private final WeatherService weatherService;
+    private final RuleBasedExplainerService ruleBasedExplainerService;
 
     public TripPlanningService(DestinationScorer destinationScorer,
                                TransportOptimizer transportOptimizer,
                                ItineraryBuilder itineraryBuilder,
                                BudgetSimulator budgetSimulator,
                                DataLoaderService dataLoaderService,
-                               WeatherService weatherService) {
+                               WeatherService weatherService,
+                               RuleBasedExplainerService ruleBasedExplainerService) {
         this.destinationScorer = destinationScorer;
         this.transportOptimizer = transportOptimizer;
         this.itineraryBuilder = itineraryBuilder;
         this.budgetSimulator = budgetSimulator;
         this.dataLoaderService = dataLoaderService;
         this.weatherService = weatherService;
+        this.ruleBasedExplainerService = ruleBasedExplainerService;
     }
 
     public PlanTripResponse planTrip(PlanTripRequest req) {
@@ -66,7 +69,18 @@ public class TripPlanningService {
             long estCost = (dest.getAvgDailyCostVnd() * req.getNumDays()) + transportCost;
             
             // Real-time Open-Meteo Weather Service
-            WeatherInfo weatherInfo = weatherService.getWeatherForCity(dest.getId());
+            WeatherInfo weatherInfo = null;
+            if (dest.getCoordinates() != null && dest.getCoordinates().containsKey("lat")) {
+                Double lat = dest.getCoordinates().get("lat");
+                Double lon = dest.getCoordinates().get("lon");
+                if (lon == null) lon = dest.getCoordinates().get("lng");
+                if (lat != null && lon != null) {
+                    weatherInfo = weatherService.getWeatherByCoordinates(lat, lon);
+                }
+            }
+            if (weatherInfo == null) {
+                weatherInfo = weatherService.getWeatherForCity(dest.getId());
+            }
             if (weatherInfo == null || !WeatherService.SOURCE_LIVE.equals(weatherInfo.getSource())) {
                 allLiveWeather = false;
             }
@@ -124,13 +138,17 @@ public class TripPlanningService {
         breakdown.setRemainingSafetyMargin(safetyMargin);
         resp.setBudgetBreakdown(breakdown);
 
-        // 5. AI Explanation
-        resp.setAiExplanation(String.format(
-                "Điểm đến %s được hệ thống đề xuất là lựa chọn tối ưu nhất (điểm MCDA: %.2f/10) nhờ chỉ số Phù hợp Sở thích và Chi phí hợp lý. Phương tiện %s được khuyến nghị dựa trên phân tích Pareto Dominance.",
-                winner != null ? winner.getName() : winnerId,
-                winner != null ? winner.getTotalScore() : 9.0,
-                bestTransport != null ? bestTransport.getDisplayName() : "Vận chuyển công cộng"
-        ));
+        // 5. Decision Intelligence AI Explanation (Model 5: Non-Blocking Rule-Based Facts Generator)
+        try {
+            resp.setAiExplanation(ruleBasedExplainerService.generateExplanation(req, resp));
+        } catch (Exception e) {
+            resp.setAiExplanation(String.format(
+                    "Điểm đến %s được hệ thống đề xuất là lựa chọn tối ưu nhất (điểm MCDA: %.2f/10) nhờ chỉ số Phù hợp Sở thích và Chi phí hợp lý. Phương tiện %s được khuyến nghị dựa trên phân tích Pareto Dominance.",
+                    winner != null ? winner.getName() : winnerId,
+                    winner != null ? winner.getTotalScore() : 9.0,
+                    bestTransport != null ? bestTransport.getDisplayName() : "Vận chuyển công cộng"
+            ));
+        }
 
         // Data sources & assumptions
         Map<String, String> sources = new LinkedHashMap<>();
@@ -144,6 +162,10 @@ public class TripPlanningService {
 
     public BudgetSensitivityResult simulateSensitivity(PlanTripRequest req) {
         return budgetSimulator.simulateSensitivity(req);
+    }
+
+    public List<Destination> getAllDestinations() {
+        return dataLoaderService.getDestinations();
     }
 
     private List<TransportOption> convertTransportOptions(RouteTransport rt) {

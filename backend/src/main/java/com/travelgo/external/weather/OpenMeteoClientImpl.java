@@ -21,6 +21,24 @@ public class OpenMeteoClientImpl implements OpenMeteoClient {
         map.put("phu-quoc", new double[]{10.2899, 103.9840});
         map.put("da-nang", new double[]{16.0544, 108.2022});
         map.put("vung-tau", new double[]{10.3460, 107.0843});
+        map.put("ha-noi", new double[]{21.0285, 105.8542});
+        map.put("sa-pa", new double[]{22.3364, 103.8438});
+        map.put("ha-giang", new double[]{22.8233, 104.9836});
+        map.put("ninh-binh", new double[]{20.2506, 105.9745});
+        map.put("ha-long", new double[]{20.9505, 107.0734});
+        map.put("cao-bang", new double[]{22.6667, 106.2500});
+        map.put("cat-ba", new double[]{20.7275, 106.9997});
+        map.put("phong-nha", new double[]{17.5898, 106.2829});
+        map.put("hue", new double[]{16.4637, 107.5909});
+        map.put("hoi-an", new double[]{15.8801, 108.3380});
+        map.put("quy-nhon", new double[]{13.7820, 109.2197});
+        map.put("phu-yen", new double[]{13.0882, 109.3075});
+        map.put("mang-den", new double[]{14.6000, 108.2833});
+        map.put("mui-ne", new double[]{10.9333, 108.2833});
+        map.put("ho-chi-minh", new double[]{10.8231, 106.6297});
+        map.put("can-tho", new double[]{10.0452, 105.7469});
+        map.put("an-giang", new double[]{10.5216, 105.1259});
+        map.put("con-dao", new double[]{8.6835, 106.6067});
         CITY_COORDINATES = Collections.unmodifiableMap(map);
     }
 
