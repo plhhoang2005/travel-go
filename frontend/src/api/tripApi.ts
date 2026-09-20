@@ -8,19 +8,30 @@ interface TransportOptionResponse extends Omit<TransportOptionData, 'isParetoOpt
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 export async function fetchPlanTrip(req: PlanTripRequest): Promise<PlanTripResponse> {
-  const response = await fetch(`${API_BASE_URL}/plan-trip`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(req),
-  });
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 20000);
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/plan-trip`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req),
+      signal: controller.signal,
+    });
+  } finally {
+    window.clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     throw new Error(`Máy chủ phản hồi lỗi ${response.status}.`);
   }
 
   const result: Omit<PlanTripResponse, 'transportOptions'> & { transportOptions: TransportOptionResponse[] } = await response.json();
+  if (!Array.isArray(result.topDestinations) || !Array.isArray(result.transportOptions) || !Array.isArray(result.itineraryDays)) {
+    throw new Error('Dữ liệu hành trình không đầy đủ.');
+  }
   return {
     ...result,
     transportOptions: result.transportOptions.map(({ paretoOptimal, isParetoOptimal, ...option }) => ({

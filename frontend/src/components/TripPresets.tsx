@@ -11,9 +11,9 @@ const presets = [
 
 export function TripPresets({ onApplyPreset, loading }: TripPresetsProps) {
   return (
-    <div className="mt-5 flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center">
-      <p className="shrink-0 text-sm font-semibold text-slate-700">Gợi ý nhanh:</p>
-      <div className="flex flex-wrap gap-2">
+    <div className="trip-presets">
+      <p>Gợi ý nhanh</p>
+      <div>
         {presets.map((preset) => (
           <button
             key={preset.id}
@@ -22,8 +22,7 @@ export function TripPresets({ onApplyPreset, loading }: TripPresetsProps) {
             onClick={() => onApplyPreset(preset.id)}
             className="preset-button"
           >
-            <span className="font-semibold text-slate-800">{preset.destination}</span><span className="text-slate-400"> · </span>
-            <span className="text-xs text-slate-500">{preset.details}</span>
+            <span>{preset.destination}</span><i> · </i><small>{preset.details}</small>
           </button>
         ))}
       </div>

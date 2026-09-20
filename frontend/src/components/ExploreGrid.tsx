@@ -1,6 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { exploreDestinations, RegionId, regionLabels } from '../data/travelContent';
+import { TravelImage } from './TravelImage';
 
 const filters: RegionId[] = ['all', 'north', 'central', 'south', 'islands'];
 
@@ -35,17 +36,19 @@ export function ExploreGrid() {
         ))}
       </div>
       <div className="explore-grid" aria-live="polite">
-        {destinations.map((destination) => (
+        {destinations.map((destination, index) => (
           <article key={destination.id} className="explore-card">
-            <div className="explore-card-image">
-              <img src={destination.image} alt={destination.alt} loading="lazy" />
-            </div>
+            <Link to={`/destination/${destination.id}`} aria-label={`Khám phá ${destination.name}`} className="explore-card-image">
+              <TravelImage src={destination.image} alt={destination.alt}>
+                <span className="explore-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+              </TravelImage>
+            </Link>
             <div className="explore-card-copy">
-              <p>{destination.province} · {destination.detail}</p>
-              <h3>{destination.name}</h3>
+              <p>{destination.province} · {destination.duration}</p>
+              <h3><Link to={`/destination/${destination.id}`}>{destination.name}</Link></h3>
               <span>{destination.description}</span>
-              <Link to="/planner" className="text-link" aria-label={`Lập kế hoạch đi ${destination.name}`}>
-                Lên kế hoạch <ArrowUpRight size={15} aria-hidden="true" />
+              <Link to={`/destination/${destination.id}`} className="text-link" aria-label={`Khám phá ${destination.name}`}>
+                Đọc hành trình <ArrowUpRight size={15} aria-hidden="true" />
               </Link>
             </div>
           </article>

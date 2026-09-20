@@ -1,5 +1,6 @@
-import { getDestinationImage, heroImage } from '../data/destinationVisuals';
+import { getDestinationImage } from '../data/destinationVisuals';
 import { DestinationCardData } from '../types/trip';
+import { TravelImage } from './TravelImage';
 
 interface DestinationCardProps {
   destination: DestinationCardData;
@@ -14,7 +15,7 @@ export function DestinationCard({ destination, rank, numDays, selected, transpor
   return (
     <article className={`destination-tile flex h-full flex-col ${selected ? '!border-ocean-400' : ''}`}>
       <div className="relative">
-        <img src={getDestinationImage(destination.id)} alt={`Ảnh phong cảnh minh họa cho ${destination.name}`} loading="lazy" className="h-48 w-full object-cover" onError={(event) => { if (!event.currentTarget.src.endsWith(heroImage)) event.currentTarget.src = heroImage; }} />
+        <TravelImage src={getDestinationImage(destination.id)} alt={`Ảnh phong cảnh minh họa cho ${destination.name}`} className="destination-card-image" />
         <span className="absolute left-3 top-3 rounded-md border border-white/70 bg-white px-2.5 py-1 text-xs font-semibold text-ink">#{rank}{rank === 1 ? ' · Phù hợp nhất' : ''}</span>
       </div>
       <div className="flex flex-1 flex-col p-5">
