@@ -1,4 +1,4 @@
-import { PlanTripRequest, PlanTripResponse, TransportOptionData } from '../types/trip';
+import { BudgetSensitivityResultData, BudgetStepData, PlanTripRequest, PlanTripResponse, TransportOptionData } from '../types/trip';
 
 interface TransportOptionResponse extends Omit<TransportOptionData, 'isParetoOptimal'> {
   isParetoOptimal?: boolean;
@@ -158,3 +158,97 @@ export function getFallbackResponse(): PlanTripResponse {
     assumptions: ['Giá vé và phòng có thể biến động 10-15% tùy ngày đặt.'],
   };
 }
+
+export async function fetchBudgetSensitivity(req: PlanTripRequest): Promise<BudgetSensitivityResultData> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/simulate-budget`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (err) {
+    console.warn('Cannot fetch live budget sensitivity, using fallback simulation', err);
+  }
+
+  return getFallbackBudgetSensitivity(req);
+}
+
+export function getFallbackBudgetSensitivity(req: PlanTripRequest): BudgetSensitivityResultData {
+  return {
+    steps: [
+      {
+        budgetVnd: 3000000,
+        budgetLabel: '3,000,000 VNĐ (Tiết kiệm)',
+        winningDestinationId: 'da-lat',
+        winningDestinationName: 'Đà Lạt',
+        destinationScore: 8.4,
+        recommendedTransportMode: 'xe_khach',
+        recommendedTransportName: 'Xe khách giường nằm cao cấp',
+        recommendedHotelTier: 'budget',
+        recommendedHotelName: 'Homestay / Nhà nghỉ tiện nghi',
+        estimatedTotalCostVnd: 2650000,
+        remainingSafetyMarginVnd: 350000,
+        isFeasible: true,
+        feasibilityStatus: 'HOÀN TOÀN KHẢ THI',
+        budgetBreakdown: {
+          transport: 500000,
+          accommodation: 750000,
+          food: 900000,
+          attractions: 500000,
+          remainingSafetyMargin: 350000,
+        },
+      },
+      {
+        budgetVnd: 4000000,
+        budgetLabel: '4,000,000 VNĐ (Tiêu chuẩn)',
+        winningDestinationId: 'da-lat',
+        winningDestinationName: 'Đà Lạt',
+        destinationScore: 8.9,
+        recommendedTransportMode: 'tau_lua',
+        recommendedTransportName: 'Tàu hỏa (Ghế mềm điều hòa Đường Sắt VN)',
+        recommendedHotelTier: 'midscale',
+        recommendedHotelName: 'Khách sạn 3 sao trung tâm',
+        estimatedTotalCostVnd: 3400000,
+        remainingSafetyMarginVnd: 600000,
+        isFeasible: true,
+        feasibilityStatus: 'HOÀN TOÀN KHẢ THI',
+        budgetBreakdown: {
+          transport: 700000,
+          accommodation: 1200000,
+          food: 1000000,
+          attractions: 500000,
+          remainingSafetyMargin: 600000,
+        },
+      },
+      {
+        budgetVnd: 5000000,
+        budgetLabel: '5,000,000 VNĐ (Thoải mái)',
+        winningDestinationId: 'da-lat',
+        winningDestinationName: 'Đà Lạt',
+        destinationScore: 9.3,
+        recommendedTransportMode: 'may_bay',
+        recommendedTransportName: 'Máy bay khứ hồi (Vietnam Airlines / Vietjet)',
+        recommendedHotelTier: 'upscale',
+        recommendedHotelName: 'Khách sạn 4 sao / Resort nghỉ dưỡng',
+        estimatedTotalCostVnd: 4450000,
+        remainingSafetyMarginVnd: 550000,
+        isFeasible: true,
+        feasibilityStatus: 'HOÀN TOÀN KHẢ THI',
+        budgetBreakdown: {
+          transport: 1600000,
+          accommodation: 1500000,
+          food: 1050000,
+          attractions: 300000,
+          remainingSafetyMargin: 550000,
+        },
+      },
+    ],
+  };
+}
+
