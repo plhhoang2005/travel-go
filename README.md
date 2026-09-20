@@ -1,7 +1,8 @@
 # TravelGO — Smart Travel & Mobility Decision Intelligence System
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Competition](https://img.shields.io/badge/MLAI%20Hackathon%202026-Track%20C%20(TMA)-blue)
+![Scope](https://img.shields.io/badge/Lifecycle-Production%20%7C%20Long--Term-success)
+![Architecture](https://img.shields.io/badge/Architecture-Decision%20Intelligence-blue)
 ![Stack](https://img.shields.io/badge/Stack-React%20%7C%20Spring%20Boot-orange)
 ![Data Source](https://img.shields.io/badge/%E2%84%B9%EF%B8%8E%20Data-Mock%2009%2F2026%20%2B%20Open--Meteo-green)
 

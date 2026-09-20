@@ -16,6 +16,19 @@ export function DestinationCard({ destination, rank, numDays, selected, transpor
       <div className="relative">
         <img src={getDestinationImage(destination.id)} alt={`Ảnh phong cảnh minh họa cho ${destination.name}`} loading="lazy" className="h-48 w-full object-cover" onError={(event) => { if (!event.currentTarget.src.endsWith(heroImage)) event.currentTarget.src = heroImage; }} />
         <span className="absolute left-3 top-3 rounded-md border border-white/70 bg-white px-2.5 py-1 text-xs font-semibold text-ink">#{rank}{rank === 1 ? ' · Phù hợp nhất' : ''}</span>
+        
+        {/* Live Weather Badge Widget */}
+        <div className="absolute right-3 top-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-sm text-sky-900 text-[11px] font-medium border border-white/80 shadow-sm">
+          <span>🌤️</span>
+          <span><strong>{destination.avgTempMax ?? 26}°C</strong></span>
+          <span className="text-sky-300">•</span>
+          <span><strong>{destination.avgPrecipitation ?? 0}mm</strong></span>
+          <span className={`ml-1 text-[9px] px-1.5 py-0.5 rounded font-mono text-white ${
+            destination.weatherSource?.includes('LIVE') ? 'bg-sky-600' : 'bg-amber-600'
+          }`}>
+            {destination.weatherSource?.includes('LIVE') ? '🌤️ LIVE' : '⚠️ FALLBACK'}
+          </span>
+        </div>
       </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3"><div><p className="text-xs text-muted">Việt Nam · {numDays} ngày</p><h2 className="mt-1 text-xl font-semibold">{destination.name}</h2></div><p className="rounded-lg bg-ocean-50 px-2 py-1.5 font-semibold text-brand">{Math.round(destination.totalScore * 10)}<span className="text-xs font-normal text-muted">/100</span></p></div>

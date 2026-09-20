@@ -14,6 +14,12 @@ export interface DestinationCardData {
   normalizedScores: Record<string, number>;
   scoreContributions: Record<string, number>;
   estimatedCostVnd: number;
+  weatherSource?: string;
+  avgTempMax?: number;
+  avgPrecipitation?: number;
+  latitude?: number;
+  longitude?: number;
+  region?: string;
 }
 
 export interface TransportOptionData {
