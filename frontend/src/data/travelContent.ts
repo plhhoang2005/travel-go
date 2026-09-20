@@ -9,6 +9,10 @@ export interface ExploreDestination {
   alt: string;
   description: string;
   detail: string;
+  duration: string;
+  travelStyle: string;
+  highlights: string[];
+  note: string;
 }
 
 export const regionLabels: Record<RegionId, string> = {
@@ -29,6 +33,10 @@ export const exploreDestinations: ExploreDestination[] = [
     alt: 'Con đường đèo uốn lượn giữa núi đá xanh ở Hà Giang',
     description: 'Những cung đèo mở ra liên tiếp giữa cao nguyên đá và thung lũng sâu.',
     detail: 'Mã Pí Lèng · Sông Nho Quế',
+    duration: '4–5 ngày',
+    travelStyle: 'Dành cho những ngày muốn đi xa và nhìn thật rộng',
+    highlights: ['Mã Pí Lèng', 'Sông Nho Quế', 'Phố cổ Đồng Văn'],
+    note: 'Hà Giang đẹp nhất khi hành trình còn đủ khoảng thở: dừng ở một khúc cua, uống chén trà nóng và để núi đá dẫn đường.',
   },
   {
     id: 'ninh-binh',
@@ -39,6 +47,10 @@ export const exploreDestinations: ExploreDestination[] = [
     alt: 'Đoàn thuyền trên dòng sông xanh giữa núi đá vôi Ninh Bình',
     description: 'Đi thuyền chậm giữa núi đá vôi, đồng lúa và những khoảng xanh yên tĩnh.',
     detail: 'Tràng An · Tam Cốc',
+    duration: '2–3 ngày',
+    travelStyle: 'Một khoảng nghỉ ngắn, gần thiên nhiên và vừa đủ chậm',
+    highlights: ['Tràng An', 'Tam Cốc', 'Hang Múa'],
+    note: 'Một chuyến đi Ninh Bình không cần dày lịch. Buổi sáng ở trên thuyền, buổi chiều nhìn đồng ruộng từ trên cao là đã đủ đầy.',
   },
   {
     id: 'hoi-an',
@@ -49,6 +61,10 @@ export const exploreDestinations: ExploreDestination[] = [
     alt: 'Nhà cổ tường vàng, đèn lồng và cờ Việt Nam ở Hội An',
     description: 'Một nhịp phố vừa đủ chậm, từ hiên nhà vàng đến bữa tối bên sông Hoài.',
     detail: 'Phố cổ · Sông Hoài',
+    duration: '2–3 ngày',
+    travelStyle: 'Cho người thích đi bộ, ăn ngon và những buổi chiều thong thả',
+    highlights: ['Phố cổ Hội An', 'Sông Hoài', 'Làng rau Trà Quế'],
+    note: 'Hội An nên được cảm nhận bằng bước chân: qua một hiên nhà, một quán nhỏ và ánh đèn lên dần khi trời tối.',
   },
   {
     id: 'da-lat',
@@ -59,6 +75,10 @@ export const exploreDestinations: ExploreDestination[] = [
     alt: 'Hồ nước và rừng thông trong sương sớm ở Đà Lạt',
     description: 'Không khí mát, những con dốc nhỏ và khoảng rừng thông cho ngày đi thật chậm.',
     detail: 'Hồ Xuân Hương · Ngoại ô',
+    duration: '3–4 ngày',
+    travelStyle: 'Hợp với cặp đôi, nhóm bạn và người muốn đổi nhịp',
+    highlights: ['Hồ Xuân Hương', 'Rừng thông ngoại ô', 'Chợ Đà Lạt'],
+    note: 'Đà Lạt có nhiều hơn những điểm phải đến. Hãy dành một buổi sáng không vội, chọn quán nhỏ và để sương tan trên sườn đồi.',
   },
   {
     id: 'ho-chi-minh',
@@ -69,6 +89,10 @@ export const exploreDestinations: ExploreDestination[] = [
     alt: 'Đường chân trời TP. Hồ Chí Minh bên sông lúc hoàng hôn',
     description: 'Năng lượng đô thị, những khu phố cũ và một buổi tối luôn còn nhiều lựa chọn.',
     detail: 'Bến Bạch Đằng · Nguyễn Huệ',
+    duration: '2–3 ngày',
+    travelStyle: 'Một cuối tuần nhiều năng lượng, ẩm thực và đời sống thành phố',
+    highlights: ['Bến Bạch Đằng', 'Chợ Lớn', 'Những quán ăn trong hẻm'],
+    note: 'Thành phố thú vị nhất ở những khoảng chuyển: ly cà phê buổi sáng, bữa trưa trong hẻm và gió sông khi phố bắt đầu lên đèn.',
   },
   {
     id: 'phu-quoc',
@@ -79,6 +103,10 @@ export const exploreDestinations: ExploreDestination[] = [
     alt: 'Bờ biển xanh và hàng dừa ở Phú Quốc',
     description: 'Ngày nắng trên đảo dành cho biển trong, hải sản và những buổi chiều không vội.',
     detail: 'Bãi biển · Nam đảo',
+    duration: '3–4 ngày',
+    travelStyle: 'Cho kỳ nghỉ có biển, nắng và nhiều thời gian để nghỉ',
+    highlights: ['Bãi Sao', 'Nam đảo', 'Làng chài ven biển'],
+    note: 'Phú Quốc hợp với một lịch trình nhẹ. Chọn một phía đảo cho mỗi ngày và giữ lại buổi chiều để chỉ ngồi gần mặt nước.',
   },
 ];
 

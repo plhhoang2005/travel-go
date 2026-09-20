@@ -29,17 +29,18 @@ export function DestinationsPage({ request, response }: { request: PlanTripReque
                 <div><p className="eyebrow">Dành riêng cho chuyến đi này</p><h2 id="recommendation-heading">{recommendationTitle}</h2></div>
                 <p>Dựa trên {request.numDays} ngày, {request.numPeople} người, sở thích và ngân sách bạn đã chọn.</p>
               </div>
-              <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              <div className="recommendation-grid">
                 {topThree.map((destination, index) => <DestinationCard key={destination.id} destination={destination} rank={index + 1} numDays={request.numDays} selected={destination.id === selected.id} onSelect={() => setSelectedId(destination.id)} transportName={destination.id === response.winnerId ? recommendedTransport?.displayName : undefined} />)}
               </div>
               <p className="mt-4 text-xs leading-6 text-muted">Ảnh mang tính minh họa. Điểm thời tiết là tiêu chí tham khảo, không phải dự báo nhiệt độ trực tiếp.</p>
+              <p className="recommendation-context">Khi bạn mở một lựa chọn khác, TravelGO chỉ thay phần so sánh điểm đến. Phương tiện, ngân sách và lịch trình vẫn thuộc về đề xuất chính <strong>{response.topDestinations.find((item) => item.id === response.winnerId)?.name}</strong>.</p>
               <div id="destination-detail" className="mt-12 scroll-mt-24 space-y-8">
                 <DestinationHero destination={selected} request={request} imageUrl={getDestinationImage(selected.id)} />
                 <ScoreBreakdown destination={selected} />
               </div>
               {selected.id === response.winnerId && <div className="mt-8"><AiExplanationBox explanation={response.aiExplanation} dataSources={response.dataSources} assumptions={response.assumptions} /></div>}
               <div className="result-actions">
-                <Link to="/transport" className="button-primary px-5 py-3 text-sm">Xem phương tiện phù hợp</Link>
+                <Link to="/trip/current" className="button-primary px-5 py-3 text-sm">Mở hành trình hoàn chỉnh</Link>
                 <Link to="/budget" className="button-secondary px-5 py-3 text-sm">Xem ngân sách</Link>
                 <Link to="/planner" className="text-link px-2 py-3 text-sm">Điều chỉnh chuyến đi</Link>
               </div>

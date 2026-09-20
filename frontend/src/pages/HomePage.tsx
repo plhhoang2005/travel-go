@@ -17,7 +17,7 @@ export function HomePage() {
         </Reveal>
         <div className="popular-grid">
           <Reveal className="popular-feature">
-            <Link to="/destinations?region=north" className="photo-story">
+            <Link to="/destination/ha-giang" className="photo-story">
               <img src="/images/ha-giang.webp" alt="Đường đèo uốn lượn giữa núi xanh Hà Giang" loading="lazy" />
               <span className="photo-story-overlay" />
               <span className="photo-story-copy"><small>Hà Giang · Miền Bắc</small><strong>Qua những cung đường chạm mây</strong><em>Mã Pí Lèng · Sông Nho Quế</em></span>
@@ -25,14 +25,14 @@ export function HomePage() {
           </Reveal>
           <div className="popular-side">
             <Reveal delay={90}>
-              <Link to="/destinations?region=south" className="photo-story photo-story-small">
+              <Link to="/destination/da-lat" className="photo-story photo-story-small">
                 <img src="/images/da-lat.webp" alt="Hồ nước và rừng thông trong sương Đà Lạt" loading="lazy" />
                 <span className="photo-story-overlay" />
                 <span className="photo-story-copy"><small>Đà Lạt · Lâm Đồng</small><strong>Một cuối tuần giữa thông và sương</strong></span>
               </Link>
             </Reveal>
             <Reveal delay={160}>
-              <Link to="/destinations?region=islands" className="photo-story photo-story-small">
+              <Link to="/destination/phu-quoc" className="photo-story photo-story-small">
                 <img src="/images/phu-quoc.webp" alt="Bờ biển và hàng dừa Phú Quốc" loading="lazy" />
                 <span className="photo-story-overlay" />
                 <span className="photo-story-copy"><small>Phú Quốc · Kiên Giang</small><strong>Những ngày chỉ cần biển xanh</strong></span>
@@ -61,15 +61,17 @@ export function HomePage() {
 
       <section className="page-shell home-section how-section">
         <Reveal><div className="section-lead"><div><p className="eyebrow">Từ ý tưởng đến hành trình</p><h2>Ba bước, đủ để bắt đầu</h2></div><p>TravelGO giữ phần so sánh ở phía sau, để phía trước chỉ còn những quyết định thật sự cần thiết.</p></div></Reveal>
-        <ol className="how-list">
-          {[
-            ['01', 'Chia sẻ cách bạn muốn đi', 'Chọn nơi xuất phát, số ngày, khoản chi và vài điều bạn yêu thích.'],
-            ['02', 'Cân nhắc những lựa chọn phù hợp', 'Điểm đến và phương tiện được đặt cạnh nhau bằng các tiêu chí rõ ràng.'],
-            ['03', 'Mang theo một kế hoạch vừa đủ', 'Xem lịch trình từng ngày, chi phí dự kiến và phần dự phòng.'],
-          ].map(([step, title, copy]) => (
-            <li key={step}><span>{step}</span><div><h3>{title}</h3><p>{copy}</p></div></li>
-          ))}
-        </ol>
+        <Reveal delay={80} className="how-list-wrap">
+          <ol className="how-list">
+            {[
+              ['01', 'Chia sẻ cách bạn muốn đi', 'Chọn nơi xuất phát, số ngày, khoản chi và vài điều bạn yêu thích.'],
+              ['02', 'Cân nhắc những lựa chọn phù hợp', 'Điểm đến và phương tiện được đặt cạnh nhau bằng các tiêu chí rõ ràng.'],
+              ['03', 'Mang theo một kế hoạch vừa đủ', 'Xem lịch trình từng ngày, chi phí dự kiến và phần dự phòng.'],
+            ].map(([step, title, copy]) => (
+              <li key={step}><span>{step}</span><div><h3>{title}</h3><p>{copy}</p></div></li>
+            ))}
+          </ol>
+        </Reveal>
       </section>
 
       <section className="planner-cta-section">

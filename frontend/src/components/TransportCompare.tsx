@@ -7,22 +7,33 @@ const tradeoffLabels: Record<string, string> = { cheapest: 'Tiết kiệm nhất
 
 export function TransportCompare({ options }: TransportCompareProps) {
   return (
-    <section className="content-section">
-      <div className="section-heading"><p className="eyebrow">Đi lại thuận tiện</p><h2>Chọn cách di chuyển</h2><p>So sánh chi phí, thời gian và mức độ thoải mái cho hành trình.</p></div>
-      {options?.length ? <div className="grid gap-3 lg:grid-cols-3">{options.map((option) => {
-        const Icon = modeIcons[option.mode as keyof typeof modeIcons] || Bus;
-        return <article key={option.mode} className={`transport-card ${option.isParetoOptimal ? 'is-recommended' : ''}`}>
-          <div className="flex items-start justify-between gap-3"><span className="icon-box"><Icon size={21} /></span>{option.isParetoOptimal && <span className="subtle-badge">Lựa chọn tốt</span>}</div>
-          <h3 className="mt-5 text-lg font-semibold text-ink">{option.displayName}</h3>
-          <p className="mt-2 text-2xl font-semibold tracking-tight text-brand">{option.priceTotalVnd.toLocaleString('vi-VN')}đ</p>
-          <dl className="mt-5 space-y-2 border-t border-line pt-4 text-sm">
-            <div className="flex justify-between"><dt className="flex items-center gap-2 text-muted"><Clock3 size={15} />Thời gian</dt><dd className="font-medium text-ink">{option.durationHours} giờ</dd></div>
-            <div className="flex justify-between"><dt className="flex items-center gap-2 text-muted"><Star size={15} />Thoải mái</dt><dd className="font-medium text-ink">{option.comfortScore}/10</dd></div>
-          </dl>
-          <p className="mt-4 text-sm leading-6 text-muted">{option.recommendationReason}</p>
-          <p className="mt-3 text-xs font-medium text-brand">{tradeoffLabels[option.tradeoffType] || option.tradeoffType}</p>
-        </article>;
-      })}</div> : <p className="empty-copy">Chưa có phương tiện phù hợp.</p>}
+    <section className="transport-compare" aria-labelledby="transport-heading">
+      <div className="section-lead">
+        <div><p className="eyebrow">Đi lại thuận tiện</p><h2 id="transport-heading">Chọn cách di chuyển</h2></div>
+        <p>Đặt thời gian, chi phí và độ thoải mái cạnh nhau để thấy lựa chọn nào hợp với nhịp đi của bạn.</p>
+      </div>
+      {options?.length ? (
+        <div className="transport-list">
+          {options.map((option, index) => {
+            const Icon = modeIcons[option.mode as keyof typeof modeIcons] || Bus;
+            return (
+              <article key={option.mode} className={option.isParetoOptimal ? 'is-recommended' : ''}>
+                <div className="transport-rank"><span>{String(index + 1).padStart(2, '0')}</span><Icon size={21} aria-hidden="true" /></div>
+                <div className="transport-name">
+                  <div>{option.isParetoOptimal && <span className="subtle-badge">Lựa chọn nổi bật</span>}<small>{tradeoffLabels[option.tradeoffType] || option.tradeoffType}</small></div>
+                  <h3>{option.displayName}</h3>
+                  <p>{option.recommendationReason}</p>
+                </div>
+                <dl>
+                  <div><dt><Clock3 size={14} aria-hidden="true" /> Thời gian</dt><dd>{option.durationHours} giờ</dd></div>
+                  <div><dt><Star size={14} aria-hidden="true" /> Thoải mái</dt><dd>{option.comfortScore}/10</dd></div>
+                </dl>
+                <div className="transport-price"><span>Tổng chi phí</span><strong>{option.priceTotalVnd.toLocaleString('vi-VN')}đ</strong></div>
+              </article>
+            );
+          })}
+        </div>
+      ) : <p className="empty-copy">Chưa có phương tiện phù hợp.</p>}
     </section>
   );
 }
