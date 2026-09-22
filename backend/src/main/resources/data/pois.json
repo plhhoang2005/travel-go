@@ -4,18 +4,90 @@
     "pois": [
       {"name": "Ăn sáng Bánh mì xíu mại Hoàng Diệu", "type": "food", "cost_vnd": 40000, "duration_hours": 1.0, "time_of_day": "morning"},
       {"name": "Dạo quanh & Chụp ảnh Hồ Xuân Hương", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 1.5, "time_of_day": "morning"},
-      {"name": "Tham quan Thung Lũng Tình Yêu", "type": "sightseeing", "cost_vnd": 250000, "duration_hours": 2.5, "time_of_day": "afternoon"},
+      {"name": "Tham quan Thung Lũng Tình Yêu & Đồi Mộng Mơ", "type": "sightseeing", "cost_vnd": 250000, "duration_hours": 2.5, "time_of_day": "afternoon"},
       {"name": "Thưởng thức Cà phê Túi Mơ To (Ngắm hoàng hôn)", "type": "cafe", "cost_vnd": 80000, "duration_hours": 1.5, "time_of_day": "afternoon"},
-      {"name": "Khám phá Chợ Đêm Đà Lạt & Lẩu gà lá é", "type": "food", "cost_vnd": 180000, "duration_hours": 2.5, "time_of_day": "evening"}
+      {"name": "Khám phá Chợ Đêm Đà Lạt & Lẩu gà lá é Tao Ngộ", "type": "food", "cost_vnd": 180000, "duration_hours": 2.5, "time_of_day": "evening"},
+      {"name": "Săn mây Cầu Đất & Thưởng thức Trà ô long", "type": "nature", "cost_vnd": 60000, "duration_hours": 3.0, "time_of_day": "morning"},
+      {"name": "Check-in Quảng trường Lâm Viên & Ga Đà Lạt", "type": "sightseeing", "cost_vnd": 30000, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Ăn tối Bánh tráng nướng & Sữa đậu nành Tăng Bạt Hổ", "type": "food", "cost_vnd": 70000, "duration_hours": 1.5, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "vung-tau",
+    "pois": [
+      {"name": "Ăn sáng Bánh khọt Cô Ba Vũng Tàu giòn rụm", "type": "food", "cost_vnd": 60000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Check-in Mũi Nghinh Phong & Cổng Trời ngắm biển", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 1.5, "time_of_day": "morning"},
+      {"name": "Leo núi ngắm toàn cảnh từ Tượng Chúa Kito Vua", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Cà phê ngắm hoàng hôn Soho Coffee Bãi Trước", "type": "cafe", "cost_vnd": 75000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Lẩu cá đuối Trương Công Định & Chợ đêm", "type": "food", "cost_vnd": 180000, "duration_hours": 2.0, "time_of_day": "evening"},
+      {"name": "Tắm biển Bãi Sau & Thưởng thức Bánh mì chảo", "type": "beach", "cost_vnd": 45000, "duration_hours": 2.5, "time_of_day": "morning"},
+      {"name": "Check-in Ngọn Hải Đăng cổ & Ăn yaourt Cô Tiên", "type": "sightseeing", "cost_vnd": 40000, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Hải sản tươi sống Gành Hào ven biển", "type": "food", "cost_vnd": 320000, "duration_hours": 2.5, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "da-nang",
+    "pois": [
+      {"name": "Ăn sáng Mì Quảng Bà Mua thơm ngon chuẩn vị", "type": "food", "cost_vnd": 45000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Tắm biển & Dạo bước Bãi biển Mỹ Khê", "type": "beach", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Khám phá Bán đảo Sơn Trà & Chùa Linh Ứng", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 2.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Cà phê Cốt dừa Cộng Bạch Đằng view sông Hàn", "type": "cafe", "cost_vnd": 60000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Xem Cầu Rồng phun lửa & Ăn tối Chợ đêm Helio", "type": "food", "cost_vnd": 160000, "duration_hours": 2.5, "time_of_day": "evening"},
+      {"name": "Tham quan Danh thắng Ngũ Hành Sơn & Làng đá mỹ nghệ", "type": "sightseeing", "cost_vnd": 40000, "duration_hours": 2.5, "time_of_day": "morning"},
+      {"name": "Khám phá Phố cổ Hội An & Chùa Cầu di sản", "type": "culture", "cost_vnd": 150000, "duration_hours": 3.5, "time_of_day": "afternoon"},
+      {"name": "Thả hoa đăng Sông Hoài & Thưởng thức Bánh mì Phượng", "type": "food", "cost_vnd": 90000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "sa-pa",
+    "pois": [
+      {"name": "Ăn sáng Cốn sủi Ông Há nóng hổi đặc trưng Sa Pa", "type": "food", "cost_vnd": 50000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Khám phá Bản Cát Cát & Check-in Thác Tiên Sa", "type": "culture", "cost_vnd": 150000, "duration_hours": 3.0, "time_of_day": "morning"},
+      {"name": "Chinh phục Nóc nhà Đông Dương Fansipan 3.143m", "type": "sightseeing", "cost_vnd": 850000, "duration_hours": 3.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Cà phê ngắm thung lũng Mường Hoa", "type": "cafe", "cost_vnd": 75000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Lẩu cá hồi cá tầm Sa Pa & Thịt xiên nướng", "type": "food", "cost_vnd": 230000, "duration_hours": 2.5, "time_of_day": "evening"},
+      {"name": "Săn mây Đèo Ô Quy Hồ & Check-in Cầu kính Rồng Mây", "type": "nature", "cost_vnd": 400000, "duration_hours": 3.0, "time_of_day": "morning"},
+      {"name": "Dạo quanh Nhà thờ đá Sa Pa & Quảng trường trung tâm", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Giao lưu văn hóa Chợ đêm Sa Pa & Mua sắm thổ cẩm", "type": "food", "cost_vnd": 120000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "ha-noi",
+    "pois": [
+      {"name": "Thưởng thức Phở Bát Đàn đậm đà phong vị Hà Thành", "type": "food", "cost_vnd": 65000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Dạo bước Hồ Gươm, ngắm Tháp Rùa & Viếng Đền Ngọc Sơn", "type": "heritage", "cost_vnd": 30000, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Tham quan Hoàng thành Thăng Long & Cột cờ Hà Nội", "type": "historical", "cost_vnd": 70000, "duration_hours": 2.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Cà phê Trứng Giảng 39 Nguyễn Hữu Huân", "type": "cafe", "cost_vnd": 40000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Khám phá Ẩm thực 36 Phố Phường & Phố Bia Tạ Hiện", "type": "food", "cost_vnd": 180000, "duration_hours": 2.5, "time_of_day": "evening"},
+      {"name": "Tham quan Văn Miếu Quốc Tử Giám & Hồ Văn", "type": "historical", "cost_vnd": 70000, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Check-in Cầu Long Biên lịch sử & Ngắm hoàng hôn bãi bồi", "type": "sightseeing", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Chả cá Lã Vọng thơm lừng ngõ cổ", "type": "food", "cost_vnd": 190000, "duration_hours": 2.0, "time_of_day": "evening"}
     ]
   },
   {
     "destination_id": "phu-quoc",
     "pois": [
-      {"name": "Ăn sáng Bún quậy Kiến Xây", "type": "food", "cost_vnd": 60000, "duration_hours": 1.0, "time_of_day": "morning"},
-      {"name": "Tắm biển & Chụp ảnh Bãi Sao", "type": "beach", "cost_vnd": 0, "duration_hours": 2.5, "time_of_day": "morning"},
-      {"name": "Tham quan Cầu Hôn (Kiss Bridge) Sunset Town", "type": "sightseeing", "cost_vnd": 100000, "duration_hours": 2.0, "time_of_day": "afternoon"},
-      {"name": "Thưởng thức Hải sản Chợ đêm Dinh Cậu", "type": "food", "cost_vnd": 350000, "duration_hours": 2.0, "time_of_day": "evening"}
+      {"name": "Ăn sáng Bún quậy Kiến Xây trứ danh", "type": "food", "cost_vnd": 65000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Tắm biển & Dạo bước Bãi Sao cát trắng mịn", "type": "beach", "cost_vnd": 0, "duration_hours": 2.5, "time_of_day": "morning"},
+      {"name": "Check-in Cầu Hôn (Kiss Bridge) & Thị trấn Hoàng Hôn", "type": "sightseeing", "cost_vnd": 100000, "duration_hours": 2.5, "time_of_day": "afternoon"},
+      {"name": "Uống nước ngắm hoàng hôn Sunset Sanato Beach Club", "type": "cafe", "cost_vnd": 120000, "duration_hours": 2.0, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Hải sản Chợ đêm Dinh Cậu & Dạo chợ", "type": "food", "cost_vnd": 350000, "duration_hours": 2.5, "time_of_day": "evening"},
+      {"name": "Đi cano 4 đảo & Lặn ngắm san hô Hòn Móng Tay", "type": "nature", "cost_vnd": 450000, "duration_hours": 4.0, "time_of_day": "morning"},
+      {"name": "Khám phá Nhà thùng nước mắm truyền thống & Vườn tiêu", "type": "culture", "cost_vnd": 30000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Gỏi cá trích & Rượu sim Rừng Phú Quốc", "type": "food", "cost_vnd": 250000, "duration_hours": 2.0, "time_of_day": "evening"}
+    ]
+  },
+  {
+    "destination_id": "ninh-binh",
+    "pois": [
+      {"name": "Ăn sáng Miến lươn bà Phấn đậm đà thơm ngậy", "type": "food", "cost_vnd": 45000, "duration_hours": 1.0, "time_of_day": "morning"},
+      {"name": "Đi thuyền nan khám phá Quần thể Danh thắng Tràng An", "type": "nature", "cost_vnd": 250000, "duration_hours": 3.0, "time_of_day": "morning"},
+      {"name": "Chinh phục Đỉnh Hang Múa ngắm trọn thung lũng Tam Cốc", "type": "sightseeing", "cost_vnd": 100000, "duration_hours": 2.5, "time_of_day": "afternoon"},
+      {"name": "Nghỉ chân thưởng thức Cà phê ngắm cánh đồng sen Ninh Bình", "type": "cafe", "cost_vnd": 50000, "duration_hours": 1.5, "time_of_day": "afternoon"},
+      {"name": "Thưởng thức Đặc sản Dê núi 7 món & Cơm cháy giòn rụm", "type": "food", "cost_vnd": 220000, "duration_hours": 2.5, "time_of_day": "evening"},
+      {"name": "Viếng thăm Cố đô Hoa Lư đền vua Đinh, vua Lê", "type": "historical", "cost_vnd": 20000, "duration_hours": 2.0, "time_of_day": "morning"},
+      {"name": "Chiêm bái Quần thể Chùa Bái Đính linh thiêng", "type": "heritage", "cost_vnd": 60000, "duration_hours": 3.0, "time_of_day": "afternoon"},
+      {"name": "Dạo chơi Phố cổ Hoa Lư rực rỡ đèn lồng về đêm", "type": "culture", "cost_vnd": 0, "duration_hours": 2.0, "time_of_day": "evening"}
     ]
   }
 ]

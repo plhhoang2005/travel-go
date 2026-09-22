@@ -2,17 +2,57 @@
   {
     "destination_id": "da-lat",
     "categories": [
-      {"tier": "budget", "name": "Homestay / Hostel trung tâm", "avg_nightly_vnd": 300000},
-      {"tier": "standard", "name": "Khách sạn 3 sao Hồ Xuân Hương", "avg_nightly_vnd": 650000},
-      {"tier": "premium", "name": "Resort Tuyền Lâm 4-5 sao", "avg_nightly_vnd": 1800000}
+      {"tier": "budget", "name": "Homestay / Hostel trung tâm Đà Lạt", "avg_nightly_vnd": 300000},
+      {"tier": "standard", "name": "Khách sạn 3 sao gần Hồ Xuân Hương", "avg_nightly_vnd": 650000},
+      {"tier": "premium", "name": "Resort Tuyền Lâm / Ana Mandara 4-5 sao", "avg_nightly_vnd": 1800000}
+    ]
+  },
+  {
+    "destination_id": "vung-tau",
+    "categories": [
+      {"tier": "budget", "name": "Nhà nghỉ / Homestay Bãi Sau", "avg_nightly_vnd": 250000},
+      {"tier": "standard", "name": "Khách sạn 3 sao mặt biển Thùy Vân", "avg_nightly_vnd": 550000},
+      {"tier": "premium", "name": "Khách sạn Pullman / Imperial Vũng Tàu 5 sao", "avg_nightly_vnd": 1600000}
+    ]
+  },
+  {
+    "destination_id": "da-nang",
+    "categories": [
+      {"tier": "budget", "name": "Hostel / Khách sạn mini gần biển Mỹ Khê", "avg_nightly_vnd": 280000},
+      {"tier": "standard", "name": "Khách sạn 3-4 sao đường Võ Nguyên Giáp", "avg_nightly_vnd": 600000},
+      {"tier": "premium", "name": "InterContinental / Furama Resort 5 sao", "avg_nightly_vnd": 2200000}
+    ]
+  },
+  {
+    "destination_id": "sa-pa",
+    "categories": [
+      {"tier": "budget", "name": "Homestay bản Tả Van / Cát Cát", "avg_nightly_vnd": 300000},
+      {"tier": "standard", "name": "Khách sạn 3 sao trung tâm thị xã Sa Pa", "avg_nightly_vnd": 650000},
+      {"tier": "premium", "name": "Hotel de la Coupole / Silk Path Resort 5 sao", "avg_nightly_vnd": 2500000}
+    ]
+  },
+  {
+    "destination_id": "ha-noi",
+    "categories": [
+      {"tier": "budget", "name": "Homestay / Khách sạn mini Phố Cổ", "avg_nightly_vnd": 320000},
+      {"tier": "standard", "name": "Khách sạn 3 sao Hoàn Kiếm / Ba Đình", "avg_nightly_vnd": 700000},
+      {"tier": "premium", "name": "Khách sạn Metropole / Lotte Hotel 5 sao", "avg_nightly_vnd": 2800000}
     ]
   },
   {
     "destination_id": "phu-quoc",
     "categories": [
-      {"tier": "budget", "name": "Bungalow Dương Đông", "avg_nightly_vnd": 450000},
-      {"tier": "standard", "name": "Khách sạn 3-4 sao Sunset Town", "avg_nightly_vnd": 1100000},
-      {"tier": "premium", "name": "Vinpearl / JW Marriott Resort", "avg_nightly_vnd": 3500000}
+      {"tier": "budget", "name": "Bungalow / Homestay Dương Đông", "avg_nightly_vnd": 450000},
+      {"tier": "standard", "name": "Khách sạn 3-4 sao Sunset Town / Bãi Trường", "avg_nightly_vnd": 1100000},
+      {"tier": "premium", "name": "Vinpearl Resort / JW Marriott Phú Quốc 5 sao", "avg_nightly_vnd": 3500000}
+    ]
+  },
+  {
+    "destination_id": "ninh-binh",
+    "categories": [
+      {"tier": "budget", "name": "Homestay view núi Tràng An / Tam Cốc", "avg_nightly_vnd": 280000},
+      {"tier": "standard", "name": "Khách sạn 3 sao thành phố Ninh Bình", "avg_nightly_vnd": 550000},
+      {"tier": "premium", "name": "Emeralda Resort Ninh Bình 5 sao", "avg_nightly_vnd": 1800000}
     ]
   }
 ]
