@@ -67,21 +67,33 @@ Quy trình vận hành tiêu chuẩn (SOP) cho **Autonomous AI Coding Pipeline (
 
 ## 2. Đặc Tả: Anti-Vague Prompt Gatekeeper
 
-### 2.1. Thang Đo Requirement Confidence
+### 2.1. Thang Đo Requirement Confidence & Điều Kiện Phân Loại
 - 🟢 **HIGH**: Phạm vi (scope) rõ ràng, hành vi (behavior) xác định, tiêu chí kiểm thử rõ $\rightarrow$ **Bỏ qua Gatekeeper**, tiến hành chu trình tự động.
 - 🟡 **MEDIUM**: Mục tiêu rõ nhưng thiếu vài thông số kỹ thuật (tên biến, endpoint, DTO field) $\rightarrow$ **Áp dụng nguyên tắc "Codebase First"**: Tự đọc code để tìm lời giải, tuyệt đối không hỏi người dùng. Khi đã giải tỏa giả định $\rightarrow$ nâng lên **HIGH** và tiếp tục.
-- 🔴 **LOW**: Yêu cầu mơ hồ, chung chung (*"làm mượt hơn"*, *"tối ưu thuật toán"*), có từ 2 hướng rẽ nhánh lớn $\rightarrow$ **KÍCH HOẠT PROMPT GATEKEEPER**: Dừng lại, không code, không plan.
+- 🔴 **LOW**: Kích hoạt khi rơi vào bất kỳ trường hợp nào sau đây:
+  1. Yêu cầu mơ hồ, chung chung (*"làm mượt hơn"*, *"tối ưu thuật toán"*).
+  2. Prompt ngắn gọn (< 10 từ) yêu cầu một tính năng lớn hoặc module mới (*"làm chức năng đăng nhập, đăng ký"*).
+  3. Yêu cầu chạm vào nợ kỹ thuật đã chấp nhận trong `knowledge.md` (ví dụ `ISSUE-003: Chưa có Auth`).
+  4. Yêu cầu chạm Permission Boundary (Vùng Đỏ: thêm dependency `pom.xml`, cài DB mới, sửa 5 Laws).
+  5. Có từ 2 hướng rẽ nhánh kiến trúc lớn cần quyết định.
+  $\rightarrow$ **KÍCH HOẠT PROMPT GATEKEEPER**: Dừng lại ngay lập tức, không code, không tạo plan.
 
-### 2.2. Mẫu Phản Hồi Khi Kích Hoạt Gatekeeper (LOW Confidence)
+### 2.2. Quy Tắc Bất Biến Khi Kích Hoạt Gatekeeper (Anti-Tool Bypassing Invariants)
+1. ❌ **CẤM TUYỆT ĐỐI**: Không gọi công cụ `ask_question`. Việc hiển thị modal hỏi-đáp làm ẩn đi toàn bộ nội dung phân tích kiến trúc cần thiết cho người dùng.
+2. ❌ **CẤM TUYỆT ĐỐI**: Không tạo file `implementation_plan.md` hay tự ý chuyển sang Planning Mode trước khi người dùng xác nhận kịch bản.
+3. ❌ **CẤM TUYỆT ĐỐI**: Không thực hiện bất kỳ lệnh ghi/sửa code nào.
+4. ✅ **BẮT BUỘC**: Chỉ sử dụng các read tools (`find_by_name`, `view_file`, `grep_search`) để thẩm định codebase.
+5. ✅ **BẮT BUỘC**: Xuất trực tiếp báo cáo Markdown vào khung chat theo đúng mẫu chuẩn dưới đây và dừng lượt gọi công cụ (stop calling tools):
+
 ```markdown
 ### ⚠️ Anti-Vague Prompt Gatekeeper Triggered
 
 #### 1. Hiện trạng Codebase liên quan
 - Tôi đã kiểm tra mã nguồn tại: `[Đường dẫn file/component liên quan]`
-- Hiện tại hệ thống đang xử lý: `[Mô tả ngắn hành vi hiện tại]`
+- Hiện tại hệ thống đang xử lý: `[Mô tả ngắn hành vi hiện tại & đối chiếu 5 Laws / Nợ kỹ thuật]`
 
 #### 2. Điểm còn thiếu / chưa rõ ràng
-- Yêu cầu của bạn đang chưa xác định rõ: `[Mô tả cụ thể điểm mơ hồ]`
+- Yêu cầu của bạn đang chưa xác định rõ: `[Mô tả cụ thể điểm mơ hồ, rủi ro Vùng Đỏ]`
 
 #### 3. Các kịch bản khả thi (Possible Scenarios)
 - **Kịch bản A**: `[Mô tả hướng A]` -> Ưu/Nhược điểm.

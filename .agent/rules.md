@@ -21,6 +21,12 @@ Tập hợp toàn bộ các quy chuẩn kỹ thuật bắt buộc tuân thủ đ
 - Cấm tự ý cài đặt thêm infrastructure (cơ sở dữ liệu mới, message broker, cache layer) trừ khi có yêu cầu cụ thể từ Tech Lead.
 - Mọi bài học kinh nghiệm mới (Lesson Candidate) phải qua đề xuất trong báo cáo bàn giao và chờ con người phê duyệt.
 
+### 1.4. Chống Lạm Dụng Tool & Bypassing Gatekeeper (Anti-Tool Bypassing)
+- Khi gặp yêu cầu xếp loại **🔴 LOW Confidence** (mơ hồ, ngắn < 10 từ cho tính năng lớn, chạm nợ kỹ thuật, đụng Vùng Đỏ):
+  - ❌ **CẤM TUYỆT ĐỐI**: Gọi công cụ `ask_question` (modal popup làm ẩn nội dung phân tích).
+  - ❌ **CẤM TUYỆT ĐỐI**: Tự ý chuyển sang Planning Mode hoặc tạo file `implementation_plan.md` trước khi người dùng xác nhận kịch bản.
+  - ✅ **BẮT BUỘC**: Xuất bản báo cáo Markdown phân tích kiến trúc trực tiếp ra chat và dừng lượt (stop calling tools).
+
 ---
 
 ## 2. Five Immutable Architecture Laws (5 Luật Bất Biến)

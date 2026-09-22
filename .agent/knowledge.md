@@ -84,3 +84,9 @@ TravelGO (TripAI) là nền tảng **Trí tuệ Nhân tạo Hỗ trợ Ra Quyế
 - **Vấn đề**: Khi mất kết nối internet hoặc API thời tiết lỗi rate-limit, backend ném ngoại lệ 500 làm hỏng toàn bộ luồng tính toán.
 - **Giải pháp**: Bọc lệnh gọi WebClient trong `try-catch`, trả về mock weather fallback kèm cờ minh bạch `isFallback = true`.
 - **Quy tắc cho Agent**: Mọi tích hợp API ngoài bắt buộc có cơ chế fallback an toàn, không bao giờ để sập luồng chính.
+
+### [ACTIVE] LESSON-004: Ngăn Chặn Tool Bypassing Trực Tiếp Trong Anti-Vague Gatekeeper
+- **Lĩnh vực**: Autonomous Agent Behavior & Safety Governance
+- **Vấn đề**: Khi người dùng nhập prompt ngắn hoặc mơ hồ ("làm chức năng đăng nhập, đăng ký"), Agent bị thiên vị công cụ IDE mặc định (`ask_question` modal hoặc Planning Mode) dẫn đến việc tự động hỏi popup hoặc vội vã tạo `implementation_plan.md` mà không xuất báo cáo thẩm định kiến trúc vào chat.
+- **Giải pháp**: Đưa ra ràng buộc cấm tuyệt đối (Anti-Tool Constraint): Khi Requirement Confidence == LOW, cấm gọi `ask_question`, cấm tạo file plan, chỉ dùng read tools để inspect và bắt buộc xuất văn bản Markdown thẩm định kiến trúc kèm Ready-to-Use Prompts ra khung chat và dừng turn.
+- **Quy tắc cho Agent**: Tuyệt đối không dùng tool tương tác ẩn (modal) thay cho báo cáo minh bạch khi gặp yêu cầu mơ hồ hoặc chạm Vùng Đỏ.

@@ -51,11 +51,17 @@ Hệ thống tài liệu dự án được tổ chức tinh gọn thành 3 tệp
 Trước khi lập kế hoạch hoặc viết code, Agent bắt buộc phải đánh giá **Requirement Confidence**:
 1. 🟢 **HIGH**: Yêu cầu rõ ràng, scope rõ $\rightarrow$ Tiến hành chu trình tự động hóa (Autonomous Execution).
 2. 🟡 **MEDIUM**: Thiếu chi tiết kỹ thuật nhỏ $\rightarrow$ **Áp dụng nguyên tắc "Codebase First"**: Tự đọc code để tìm lời giải, không hỏi người dùng.
-3. 🔴 **LOW**: Yêu cầu mơ hồ, scope mông lung, có từ 2 hướng rẽ nhánh $\rightarrow$ **DỪNG LẠI, KÍCH HOẠT PROMPT GATEKEEPER**:
-   - Inspect nhanh codebase liên quan.
-   - Chỉ rõ điểm mơ hồ.
-   - Đưa ra 2–3 kịch bản kèm ưu/nhược điểm.
-   - Cung cấp 2–3 Ready-to-Use Prompts để người dùng chọn copy-paste.
+3. 🔴 **LOW**: Yêu cầu mơ hồ, ngắn gọn (< 10 từ cho tính năng lớn), chạm vào nợ kỹ thuật đã chấp nhận trong `knowledge.md` (như Auth `ISSUE-003`), chạm Permission Boundary (Vùng Đỏ: thêm dependency `pom.xml`, cài DB mới), hoặc có từ 2 hướng rẽ nhánh $\rightarrow$ **DỪNG LẠI, KÍCH HOẠT PROMPT GATEKEEPER**:
+   - ❌ **CẤM TUYỆT ĐỐI**: Không được gọi công cụ hỏi-đáp modal `ask_question`.
+   - ❌ **CẤM TUYỆT ĐỐI**: Không được tự ý chuyển sang Planning Mode hoặc tạo file `implementation_plan.md`.
+   - ❌ **CẤM TUYỆT ĐỐI**: Không được gọi bất kỳ lệnh ghi/sửa code nào.
+   - ✅ **BẮT BUỘC**: Dùng read tools để inspect codebase liên quan.
+   - ✅ **BẮT BUỘC**: Xuất trực tiếp văn bản Markdown theo mẫu `### ⚠️ Anti-Vague Prompt Gatekeeper Triggered` vào khung chat:
+     - Hiện trạng Codebase liên quan.
+     - Điểm mơ hồ / xung đột kiến trúc & luật dự án.
+     - 2–3 kịch bản kèm ưu/nhược điểm.
+     - 2–3 Ready-to-Use Prompts để người dùng chọn copy-paste.
+   - ✅ **BẮT BUỘC**: Dừng gọi công cụ (Stop calling tools) để kết thúc lượt, chờ người dùng phản hồi.
 
 ---
 
