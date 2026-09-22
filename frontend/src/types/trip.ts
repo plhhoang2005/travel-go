@@ -14,6 +14,12 @@ export interface DestinationCardData {
   normalizedScores: Record<string, number>;
   scoreContributions: Record<string, number>;
   estimatedCostVnd: number;
+  weatherSource?: string;
+  avgTempMax?: number;
+  avgPrecipitation?: number;
+  latitude?: number;
+  longitude?: number;
+  region?: string;
 }
 
 export interface TransportOptionData {
@@ -58,3 +64,26 @@ export interface PlanTripResponse {
   dataSources: Record<string, string>;
   assumptions: string[];
 }
+
+export interface BudgetStepData {
+  budgetVnd: number;
+  budgetLabel: string;
+  winningDestinationId: string;
+  winningDestinationName: string;
+  destinationScore: number;
+  recommendedTransportMode?: string;
+  recommendedTransportName?: string;
+  recommendedHotelTier?: string;
+  recommendedHotelName?: string;
+  estimatedTotalCostVnd: number;
+  remainingSafetyMarginVnd: number;
+  isFeasible?: boolean;
+  feasible?: boolean;
+  feasibilityStatus: string;
+  budgetBreakdown?: BudgetBreakdownData;
+}
+
+export interface BudgetSensitivityResultData {
+  steps: BudgetStepData[];
+}
+

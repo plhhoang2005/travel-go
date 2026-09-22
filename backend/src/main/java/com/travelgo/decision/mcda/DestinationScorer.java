@@ -44,6 +44,8 @@ public class DestinationScorer {
         DestinationCard card = scoreDestination(destination, request, weatherScore, travelTimeHours, estimatedCostVnd);
         if (weatherInfo != null) {
             card.setWeatherSource(weatherInfo.getSource());
+            card.setAvgTempMax(weatherInfo.getAvgTempMax());
+            card.setAvgPrecipitation(weatherInfo.getAvgPrecipitation());
         }
         return card;
     }
@@ -59,6 +61,14 @@ public class DestinationScorer {
         DestinationCard card = new DestinationCard();
         card.setId(destination.getId());
         card.setName(destination.getName());
+        card.setRegion(destination.getRegion());
+        if (destination.getCoordinates() != null) {
+            Double lat = destination.getCoordinates().get("lat");
+            Double lon = destination.getCoordinates().get("lon");
+            if (lon == null) lon = destination.getCoordinates().get("lng");
+            card.setLatitude(lat);
+            card.setLongitude(lon);
+        }
         card.setEstimatedCostVnd(estimatedCostVnd);
 
         // 1. Normalize Criteria to 0.0 - 10.0 Scale

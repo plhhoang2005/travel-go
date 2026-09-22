@@ -1,4 +1,4 @@
-import { PlanTripRequest, PlanTripResponse, TransportOptionData } from '../types/trip';
+import { BudgetSensitivityResultData, BudgetStepData, PlanTripRequest, PlanTripResponse, TransportOptionData } from '../types/trip';
 
 interface TransportOptionResponse extends Omit<TransportOptionData, 'isParetoOptimal'> {
   isParetoOptimal?: boolean;
@@ -6,6 +6,16 @@ interface TransportOptionResponse extends Omit<TransportOptionData, 'isParetoOpt
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+
+export interface RawDestination {
+  id: string;
+  name: string;
+  region: string;
+  coordinates: { lat: number; lon: number };
+  tags: string[];
+  uniqueness_score: number;
+  avg_daily_cost_vnd: number;
+}
 
 export async function fetchPlanTrip(req: PlanTripRequest): Promise<PlanTripResponse> {
   const response = await fetch(`${API_BASE_URL}/plan-trip`, {
@@ -28,6 +38,36 @@ export async function fetchPlanTrip(req: PlanTripRequest): Promise<PlanTripRespo
       isParetoOptimal: isParetoOptimal ?? paretoOptimal ?? false,
     })),
   };
+}
+
+export async function fetchDestinations(): Promise<RawDestination[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/destinations`);
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (err) {
+    console.warn('Cannot fetch live destinations from backend, using fallback list', err);
+  }
+  return [
+    { id: 'ha-noi', name: 'Hà Nội', region: 'Miền Bắc', coordinates: { lat: 21.0285, lon: 105.8542 }, tags: ['city', 'food', 'heritage'], uniqueness_score: 9.2, avg_daily_cost_vnd: 650000 },
+    { id: 'sa-pa', name: 'Sa Pa (Lào Cai)', region: 'Miền Bắc', coordinates: { lat: 22.3364, lon: 103.8438 }, tags: ['mountain', 'trekking', 'cool-weather'], uniqueness_score: 9.0, avg_daily_cost_vnd: 700000 },
+    { id: 'ha-giang', name: 'Hà Giang', region: 'Miền Bắc', coordinates: { lat: 22.8233, lon: 104.9836 }, tags: ['mountain', 'adventure', 'pass'], uniqueness_score: 9.5, avg_daily_cost_vnd: 550000 },
+    { id: 'ninh-binh', name: 'Ninh Bình', region: 'Miền Bắc', coordinates: { lat: 20.2506, lon: 105.9745 }, tags: ['heritage', 'nature', 'boat'], uniqueness_score: 8.9, avg_daily_cost_vnd: 600000 },
+    { id: 'ha-long', name: 'Vịnh Hạ Long (Quảng Ninh)', region: 'Miền Bắc', coordinates: { lat: 20.9505, lon: 107.0734 }, tags: ['beach', 'island', 'cruise'], uniqueness_score: 9.4, avg_daily_cost_vnd: 950000 },
+    { id: 'phong-nha', name: 'Phong Nha - Kẻ Bàng (Quảng Bình)', region: 'Miền Trung', coordinates: { lat: 17.5898, lon: 106.2829 }, tags: ['cave', 'adventure', 'nature'], uniqueness_score: 9.6, avg_daily_cost_vnd: 700000 },
+    { id: 'hue', name: 'Cố đô Huế', region: 'Miền Trung', coordinates: { lat: 16.4637, lon: 107.5909 }, tags: ['heritage', 'culture', 'food'], uniqueness_score: 8.8, avg_daily_cost_vnd: 550000 },
+    { id: 'da-nang', name: 'Đà Nẵng', region: 'Miền Trung', coordinates: { lat: 16.0544, lon: 108.2022 }, tags: ['beach', 'city', 'food'], uniqueness_score: 8.7, avg_daily_cost_vnd: 800000 },
+    { id: 'hoi-an', name: 'Hội An (Quảng Nam)', region: 'Miền Trung', coordinates: { lat: 15.8801, lon: 108.338 }, tags: ['heritage', 'ancient-town', 'lantern'], uniqueness_score: 9.1, avg_daily_cost_vnd: 750000 },
+    { id: 'quy-nhon', name: 'Quy Nhơn (Bình Định)', region: 'Miền Trung', coordinates: { lat: 13.782, lon: 109.2197 }, tags: ['beach', 'seafood', 'island'], uniqueness_score: 8.4, avg_daily_cost_vnd: 600000 },
+    { id: 'da-lat', name: 'Đà Lạt (Lâm Đồng)', region: 'Tây Nguyên', coordinates: { lat: 11.9465, lon: 108.4419 }, tags: ['mountain', 'food', 'romantic', 'cool-weather'], uniqueness_score: 8.5, avg_daily_cost_vnd: 600000 },
+    { id: 'mang-den', name: 'Măng Đen (Kon Tum)', region: 'Tây Nguyên', coordinates: { lat: 14.6, lon: 108.2833 }, tags: ['mountain', 'pine-forest', 'cool-weather'], uniqueness_score: 8.6, avg_daily_cost_vnd: 500000 },
+    { id: 'ho-chi-minh', name: 'TP. Hồ Chí Minh', region: 'Miền Nam', coordinates: { lat: 10.8231, lon: 106.6297 }, tags: ['city', 'food', 'shopping'], uniqueness_score: 8.8, avg_daily_cost_vnd: 750000 },
+    { id: 'vung-tau', name: 'Vũng Tàu', region: 'Miền Nam', coordinates: { lat: 10.346, lon: 107.0843 }, tags: ['beach', 'seafood', 'quick-trip'], uniqueness_score: 7.2, avg_daily_cost_vnd: 450000 },
+    { id: 'can-tho', name: 'Cần Thơ (Tây Đô)', region: 'Tây Nam Bộ', coordinates: { lat: 10.0452, lon: 105.7469 }, tags: ['floating-market', 'river', 'culture'], uniqueness_score: 8.3, avg_daily_cost_vnd: 500000 },
+    { id: 'phu-quoc', name: 'Đảo Ngọc Phú Quốc (Kiên Giang)', region: 'Tây Nam Bộ', coordinates: { lat: 10.2899, lon: 103.984 }, tags: ['beach', 'resort', 'luxury', 'island'], uniqueness_score: 9.0, avg_daily_cost_vnd: 1200000 },
+    { id: 'con-dao', name: 'Côn Đảo (Bà Rịa - Vũng Tàu)', region: 'Miền Nam', coordinates: { lat: 8.6835, lon: 106.6067 }, tags: ['island', 'beach', 'nature'], uniqueness_score: 9.1, avg_daily_cost_vnd: 1100000 }
+  ];
 }
 
 export function getFallbackResponse(): PlanTripResponse {
@@ -118,3 +158,97 @@ export function getFallbackResponse(): PlanTripResponse {
     assumptions: ['Giá vé và phòng có thể biến động 10-15% tùy ngày đặt.'],
   };
 }
+
+export async function fetchBudgetSensitivity(req: PlanTripRequest): Promise<BudgetSensitivityResultData> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/simulate-budget`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req),
+    });
+
+    if (response.ok) {
+      return await response.json();
+    }
+  } catch (err) {
+    console.warn('Cannot fetch live budget sensitivity, using fallback simulation', err);
+  }
+
+  return getFallbackBudgetSensitivity(req);
+}
+
+export function getFallbackBudgetSensitivity(req: PlanTripRequest): BudgetSensitivityResultData {
+  return {
+    steps: [
+      {
+        budgetVnd: 3000000,
+        budgetLabel: '3,000,000 VNĐ (Tiết kiệm)',
+        winningDestinationId: 'da-lat',
+        winningDestinationName: 'Đà Lạt',
+        destinationScore: 8.4,
+        recommendedTransportMode: 'xe_khach',
+        recommendedTransportName: 'Xe khách giường nằm cao cấp',
+        recommendedHotelTier: 'budget',
+        recommendedHotelName: 'Homestay / Nhà nghỉ tiện nghi',
+        estimatedTotalCostVnd: 2650000,
+        remainingSafetyMarginVnd: 350000,
+        isFeasible: true,
+        feasibilityStatus: 'HOÀN TOÀN KHẢ THI',
+        budgetBreakdown: {
+          transport: 500000,
+          accommodation: 750000,
+          food: 900000,
+          attractions: 500000,
+          remainingSafetyMargin: 350000,
+        },
+      },
+      {
+        budgetVnd: 4000000,
+        budgetLabel: '4,000,000 VNĐ (Tiêu chuẩn)',
+        winningDestinationId: 'da-lat',
+        winningDestinationName: 'Đà Lạt',
+        destinationScore: 8.9,
+        recommendedTransportMode: 'tau_lua',
+        recommendedTransportName: 'Tàu hỏa (Ghế mềm điều hòa Đường Sắt VN)',
+        recommendedHotelTier: 'midscale',
+        recommendedHotelName: 'Khách sạn 3 sao trung tâm',
+        estimatedTotalCostVnd: 3400000,
+        remainingSafetyMarginVnd: 600000,
+        isFeasible: true,
+        feasibilityStatus: 'HOÀN TOÀN KHẢ THI',
+        budgetBreakdown: {
+          transport: 700000,
+          accommodation: 1200000,
+          food: 1000000,
+          attractions: 500000,
+          remainingSafetyMargin: 600000,
+        },
+      },
+      {
+        budgetVnd: 5000000,
+        budgetLabel: '5,000,000 VNĐ (Thoải mái)',
+        winningDestinationId: 'da-lat',
+        winningDestinationName: 'Đà Lạt',
+        destinationScore: 9.3,
+        recommendedTransportMode: 'may_bay',
+        recommendedTransportName: 'Máy bay khứ hồi (Vietnam Airlines / Vietjet)',
+        recommendedHotelTier: 'upscale',
+        recommendedHotelName: 'Khách sạn 4 sao / Resort nghỉ dưỡng',
+        estimatedTotalCostVnd: 4450000,
+        remainingSafetyMarginVnd: 550000,
+        isFeasible: true,
+        feasibilityStatus: 'HOÀN TOÀN KHẢ THI',
+        budgetBreakdown: {
+          transport: 1600000,
+          accommodation: 1500000,
+          food: 1050000,
+          attractions: 300000,
+          remainingSafetyMargin: 550000,
+        },
+      },
+    ],
+  };
+}
+

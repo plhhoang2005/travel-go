@@ -48,6 +48,11 @@ public class PlanTripResponse {
         private Map<String, Double> scoreContributions;
         private long estimatedCostVnd;
         private String weatherSource;
+        private double avgTempMax;
+        private double avgPrecipitation;
+        private Double latitude;
+        private Double longitude;
+        private String region;
 
         public DestinationCard() {}
 
@@ -71,6 +76,21 @@ public class PlanTripResponse {
 
         public String getWeatherSource() { return weatherSource; }
         public void setWeatherSource(String weatherSource) { this.weatherSource = weatherSource; }
+
+        public double getAvgTempMax() { return avgTempMax; }
+        public void setAvgTempMax(double avgTempMax) { this.avgTempMax = avgTempMax; }
+
+        public double getAvgPrecipitation() { return avgPrecipitation; }
+        public void setAvgPrecipitation(double avgPrecipitation) { this.avgPrecipitation = avgPrecipitation; }
+
+        public Double getLatitude() { return latitude; }
+        public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+        public Double getLongitude() { return longitude; }
+        public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+        public String getRegion() { return region; }
+        public void setRegion(String region) { this.region = region; }
     }
 
     public static class TransportOption {

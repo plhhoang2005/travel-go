@@ -53,7 +53,7 @@ TravelGO (TripAI) là nền tảng **Trí tuệ Nhân tạo Hỗ trợ Ra Quyế
 
 ### ISSUE-001: Bộ Dữ Liệu 5 File Mock JSON Tĩnh
 - **Hiện trạng**: Toàn bộ điểm đến, khách sạn, giá vé và POI nạp từ `backend/src/main/resources/data/*.json`.
-- **Lý do chấp nhận**: Đảm bảo hệ thống khởi chạy độc lập và ổn định khi chấm thi / demo hackathon.
+- **Lý do chấp nhận**: Đảm bảo hệ thống khởi chạy độc lập, nhanh chóng và ổn định trong giai đoạn phát triển ban đầu.
 
 ### ISSUE-002: LLM Explainer Đang Dùng Mock / Rule-Based Template
 - **Hiện trạng**: Tầng thuyết minh đang dùng template nội suy chuỗi từ kết quả tính toán toán học (`RuleBasedExplainerService.java`).

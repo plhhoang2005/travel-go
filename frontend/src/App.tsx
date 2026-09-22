@@ -104,7 +104,7 @@ export default function App() {
             <Route path="/planner" element={<PlannerPage {...plannerProps} />} />
             <Route path="/destinations" element={<DestinationsPage {...shared} />} />
             <Route path="/transport" element={<TransportPage {...shared} />} />
-            <Route path="/budget" element={<BudgetPage {...shared} />} />
+            <Route path="/budget" element={<BudgetPage {...shared} onRequestChange={setRequest} onRePlan={submitPlan} />} />
             <Route path="/itinerary" element={<ItineraryPage {...shared} departureDate={plannedDate} />} />
             <Route path="/hotels" element={<ServicePage type="hotel" />} />
             <Route path="/food" element={<ServicePage type="food" />} />

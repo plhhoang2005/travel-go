@@ -1,7 +1,8 @@
 # TravelGO — Smart Travel & Mobility Decision Intelligence System
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Competition](https://img.shields.io/badge/MLAI%20Hackathon%202026-Track%20C%20(TMA)-blue)
+![Scope](https://img.shields.io/badge/Lifecycle-Production%20%7C%20Long--Term-success)
+![Architecture](https://img.shields.io/badge/Architecture-Decision%20Intelligence-blue)
 ![Stack](https://img.shields.io/badge/Stack-React%20%7C%20Spring%20Boot-orange)
 ![Data Source](https://img.shields.io/badge/%E2%84%B9%EF%B8%8E%20Data-Mock%2009%2F2026%20%2B%20Open--Meteo-green)
 
@@ -40,36 +41,47 @@ travel-go/
 │   │   ├── data/                 # DataLoader via Jackson ObjectMapper
 │   │   └── external/             # Open-Meteo Weather Client
 │   └── src/main/resources/data/   # 5 Mock Datasets JSON
-├── docs/                         # Architecture & Runbook
+├── docs/                         # Deployment & Architecture Guides
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start (Local Run)
+## 🚀 Quick Start
 
-### Backend (Spring Boot 3)
+### Option 1: Chạy bằng Docker Compose (Khuyên dùng)
+```bash
+docker-compose up --build
+# Ứng dụng chạy tại:
+# - Frontend: http://localhost:80
+# - Backend API: http://localhost:8080
+```
+Xem chi tiết tại [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md).
+
+### Option 2: Chạy cục bộ từng phần (Local Dev)
+
+#### Backend (Spring Boot 3)
 ```bash
 cd backend
 ./mvnw spring-boot:run
-# Server runs on http://localhost:8080
+# Server chạy tại http://localhost:8080
 ```
 
-### Frontend (React + Vite)
+#### Frontend (React + Vite)
 ```bash
 cd frontend
 npm install
 npm run dev
-# App runs on http://localhost:5173
+# App chạy tại http://localhost:5173
 ```
 
 ---
 
-## 🧪 3 Demo Preset Test Cases (For Judges)
+## 🧪 3 Kịch Bản Mẫu Sẵn Có (Quick Presets)
 
-1. **Preset 1 (Default)**: Đà Lạt 3N2Đ — Ngân sách 4.000.000 VNĐ (Nhóm 2 người).
-2. **Preset 2**: Phú Quốc 4N3Đ — Ngân sách 8.000.000 VNĐ (Gia đình).
-3. **Preset 3**: Vũng Tàu 2N1Đ — Ngân sách 1.500.000 VNĐ (Phượt xe máy).
+1. **Preset 1 (Cân bằng khám phá)**: Đà Lạt 3N2Đ — Ngân sách 4.000.000 VNĐ.
+2. **Preset 2 (Nghỉ dưỡng gia đình)**: Phú Quốc 4N3Đ — Ngân sách 8.000.000 VNĐ.
+3. **Preset 3 (Tiết kiệm / Phượt)**: Vũng Tàu 2N1Đ — Ngân sách 1.500.000 VNĐ.
 
 ---
 
