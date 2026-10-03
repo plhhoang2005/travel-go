@@ -1,6 +1,8 @@
 package com.travelgo.decision.sensitivity;
 
 import com.travelgo.data.DataLoaderService;
+import com.travelgo.decision.budget.BudgetCalculator;
+import com.travelgo.decision.itinerary.ItineraryBuilder;
 import com.travelgo.decision.mcda.DestinationScorer;
 import com.travelgo.decision.pareto.TransportOptimizer;
 import com.travelgo.dto.BudgetSensitivityResult;
@@ -8,9 +10,11 @@ import com.travelgo.dto.BudgetSensitivityResult.BudgetStep;
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse.BudgetBreakdown;
 import com.travelgo.dto.PlanTripResponse.DestinationCard;
+import com.travelgo.dto.PlanTripResponse.ItineraryDay;
 import com.travelgo.dto.PlanTripResponse.TransportOption;
 import com.travelgo.model.Destination;
 import com.travelgo.model.DestinationHotels.HotelCategory;
+import com.travelgo.model.DestinationPois.PoiItem;
 import com.travelgo.model.RouteTransport;
 import com.travelgo.model.RouteTransport.Option;
 import org.springframework.stereotype.Component;
@@ -21,6 +25,10 @@ import java.util.*;
 public class BudgetSimulator {
 
     // Named constants for 3-step simulation (No Magic Numbers rule)
+    private static final long DEFAULT_FOOD_DAILY_VND = 350_000L;
+    private static final long ATTRACTIONS_BUDGET_PER_PERSON_VND = 500_000L;
+    private static final double TRANSPORT_BUDGET_SHARE = 0.35;
+
     public static final long BUDGET_3M_VND = 3_000_000L;
     public static final long BUDGET_4M_VND = 4_000_000L;
     public static final long BUDGET_5M_VND = 5_000_000L;
@@ -47,29 +55,34 @@ public class BudgetSimulator {
      * Runs 3-step budget sensitivity simulation for 3M, 4M, and 5M VND.
      */
     public BudgetSensitivityResult simulateSensitivity(PlanTripRequest baseRequest) {
+        BudgetCalculator.totalBudget(baseRequest);
         List<BudgetStep> steps = new ArrayList<>();
+        boolean perPerson = baseRequest.getBudgetPerPersonVnd() > 0;
 
         for (long budget : SIMULATION_BUDGETS) {
+            long groupBudget = perPerson ? BudgetCalculator.groupCost(budget, baseRequest.getNumPeople()) : budget;
             PlanTripRequest stepReq = new PlanTripRequest(
                     baseRequest.getOrigin() != null ? baseRequest.getOrigin() : "Ho Chi Minh",
                     baseRequest.getNumDays() > 0 ? baseRequest.getNumDays() : 3,
                     baseRequest.getNumPeople() > 0 ? baseRequest.getNumPeople() : 1,
-                    budget,
+                    groupBudget,
                     baseRequest.getPreferences(),
                     baseRequest.getPriority()
             );
 
-            BudgetStep step = runSimulationStep(stepReq, budget);
+            BudgetStep step = runSimulationStep(stepReq, groupBudget, perPerson ? budget : null);
             steps.add(step);
         }
 
         return new BudgetSensitivityResult(steps);
     }
 
-    private BudgetStep runSimulationStep(PlanTripRequest req, long budgetVnd) {
+    private BudgetStep runSimulationStep(PlanTripRequest req, long budgetVnd, Long perPersonBudget) {
         BudgetStep step = new BudgetStep();
         step.setBudgetVnd(budgetVnd);
-        step.setBudgetLabel(getBudgetLabel(budgetVnd));
+        step.setBudgetPerPersonVnd(perPersonBudget);
+        step.setBudgetLabel(getBudgetLabel(perPersonBudget != null ? perPersonBudget : budgetVnd)
+                + (perPersonBudget != null ? " /người" : " tổng nhóm"));
 
         List<Destination> destinations = dataLoaderService.getDestinations();
         if (destinations.isEmpty()) {
@@ -97,7 +110,8 @@ public class BudgetSimulator {
             long estCost = (dest.getAvgDailyCostVnd() * req.getNumDays()) + transportCost;
             double weatherScore = 8.5; // Default score or live
 
-            DestinationCard card = destinationScorer.scoreDestination(dest, req, weatherScore, travelTime, estCost);
+            DestinationCard card = destinationScorer.scoreDestination(dest, req, weatherScore, travelTime,
+                    BudgetCalculator.groupCost(estCost, req.getNumPeople()));
             if (topCard == null || card.getTotalScore() > topCard.getTotalScore()) {
                 topCard = card;
                 topDest = dest;
@@ -115,7 +129,8 @@ public class BudgetSimulator {
             dtos = transportOptimizer.optimize(dtos);
 
             TransportOption chosenTransport = dtos.stream()
-                    .filter(t -> t.getPriceTotalVnd() <= budgetVnd * 0.35)
+                    .filter(t -> BudgetCalculator.groupCost(t.getPriceTotalVnd(), req.getNumPeople())
+                            <= budgetVnd * TRANSPORT_BUDGET_SHARE)
                     .findFirst()
                     .orElse(dtos.isEmpty() ? null : dtos.get(0));
 
@@ -126,7 +141,7 @@ public class BudgetSimulator {
 
             // 3. Hotel selection
             List<HotelCategory> hotels = dataLoaderService.getHotelsForDestination(topDest.getId());
-            HotelCategory chosenHotel = selectHotelCategory(hotels, budgetVnd, req.getNumDays());
+            HotelCategory chosenHotel = selectHotelCategory(hotels, perPersonBudget != null ? perPersonBudget : budgetVnd, req.getNumDays());
             if (chosenHotel != null) {
                 step.setRecommendedHotelTier(chosenHotel.getTier());
                 step.setRecommendedHotelName(chosenHotel.getName());
@@ -134,19 +149,22 @@ public class BudgetSimulator {
 
             // 4. Budget breakdown calculation
             long transportCost = chosenTransport != null ? chosenTransport.getPriceTotalVnd() : 500_000L;
-            long hotelCost = (chosenHotel != null ? chosenHotel.getAvgNightlyVnd() : 400_000L) * req.getNumDays();
-            long foodCost = 250_000L * req.getNumDays();
-            long attrCost = 300_000L;
-
-            long totalEstCost = transportCost + hotelCost + foodCost + attrCost;
-            long safetyMargin = budgetVnd - totalEstCost;
-
-            BudgetBreakdown breakdown = new BudgetBreakdown();
-            breakdown.setTransport(transportCost);
-            breakdown.setAccommodation(hotelCost);
-            breakdown.setFood(foodCost);
-            breakdown.setAttractions(attrCost);
-            breakdown.setRemainingSafetyMargin(safetyMargin);
+            long roomPerNight = chosenHotel != null ? chosenHotel.getAvgNightlyVnd() : 400_000L;
+            long foodDaily = DEFAULT_FOOD_DAILY_VND;
+            if (dataLoaderService.getPricingData() != null
+                    && dataLoaderService.getPricingData().getFoodDailyEstimate() != null) {
+                foodDaily = dataLoaderService.getPricingData().getFoodDailyEstimate()
+                        .getOrDefault("standard", DEFAULT_FOOD_DAILY_VND);
+            }
+            List<PoiItem> pois = dataLoaderService.getPoisForDestination(topDest.getId());
+            List<ItineraryDay> days = new ItineraryBuilder().buildItinerary(topDest.getId(),
+                    req.getNumDays(), ATTRACTIONS_BUDGET_PER_PERSON_VND, pois);
+            long attractionsPerPerson = BudgetCalculator.attractionsPerPerson(days, pois);
+            BudgetBreakdown breakdown = BudgetCalculator.breakdown(budgetVnd, req.getNumDays(),
+                    req.getNumPeople(), transportCost, roomPerNight, foodDaily, attractionsPerPerson);
+            long totalEstCost = breakdown.getTransport() + breakdown.getAccommodation()
+                    + breakdown.getFood() + breakdown.getAttractions();
+            long safetyMargin = breakdown.getRemainingSafetyMargin();
             step.setBudgetBreakdown(breakdown);
 
             step.setEstimatedTotalCostVnd(totalEstCost);

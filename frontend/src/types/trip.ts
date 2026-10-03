@@ -79,6 +79,7 @@ export interface PlanTripResponse {
 
 export interface BudgetStepData {
   budgetVnd: number;
+  budgetPerPersonVnd?: number;
   budgetLabel: string;
   winningDestinationId: string;
   winningDestinationName: string;

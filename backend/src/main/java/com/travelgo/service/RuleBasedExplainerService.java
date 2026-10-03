@@ -1,5 +1,6 @@
 package com.travelgo.service;
 
+import com.travelgo.decision.budget.BudgetCalculator;
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse;
 import com.travelgo.dto.PlanTripResponse.BudgetBreakdown;
@@ -134,7 +135,7 @@ public class RuleBasedExplainerService {
         if (budget == null) return;
 
         long margin = budget.getRemainingSafetyMargin();
-        long totalBudget = req.getBudgetVnd();
+        long totalBudget = BudgetCalculator.totalBudget(req);
         double percent = (totalBudget > 0) ? ((double) margin / totalBudget) * 100.0 : 0.0;
 
         sb.append(String.format("💰 **Biên độ An toàn Tài chính**: Bạn còn khoản dự phòng **%s VNĐ** (tương đương **%.1f%%** ngân sách). ",

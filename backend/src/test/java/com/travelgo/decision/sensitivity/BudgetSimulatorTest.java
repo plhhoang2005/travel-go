@@ -47,4 +47,30 @@ public class BudgetSimulatorTest {
             assertNotNull(step.getBudgetBreakdown());
         }
     }
+    @Test
+    public void perPersonStepsUseGroupBudgetsAndStandardFood() {
+        PlanTripRequest req = new PlanTripRequest("Ho Chi Minh", 3, 2, 0,
+                List.of("mountain"), "balanced");
+        req.setBudgetPerPersonVnd(4_000_000L);
+        BudgetSensitivityResult result = simulator.simulateSensitivity(req);
+        assertEquals(List.of(6_000_000L, 8_000_000L, 10_000_000L),
+                result.getSteps().stream().map(BudgetSensitivityResult.BudgetStep::getBudgetVnd).toList());
+        assertEquals(List.of(3_000_000L, 4_000_000L, 5_000_000L),
+                result.getSteps().stream().map(BudgetSensitivityResult.BudgetStep::getBudgetPerPersonVnd).toList());
+        for (BudgetSensitivityResult.BudgetStep step : result.getSteps()) {
+            assertTrue(step.getBudgetLabel().contains("/người"));
+            assertEquals(2_100_000L, step.getBudgetBreakdown().getFood());
+            assertEquals(step.getBudgetVnd(),
+                    step.getEstimatedTotalCostVnd() + step.getRemainingSafetyMarginVnd());
+        }
+    }
+
+    @Test
+    public void legacyStepsStayGroupBudgets() {
+        PlanTripRequest req = new PlanTripRequest("Ho Chi Minh", 3, 2, 4_000_000L,
+                List.of("mountain"), "balanced");
+        BudgetSensitivityResult result = simulator.simulateSensitivity(req);
+        assertEquals(4_000_000L, result.getSteps().get(1).getBudgetVnd());
+        assertNull(result.getSteps().get(1).getBudgetPerPersonVnd());
+    }
 }
