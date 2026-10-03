@@ -4,9 +4,9 @@ interface TripPresetsProps {
 }
 
 const presets = [
-  { id: 1, destination: 'Đà Lạt', details: '3 ngày · 2 người · 4 triệu' },
-  { id: 2, destination: 'Phú Quốc', details: '4 ngày · 3 người · 8 triệu' },
-  { id: 3, destination: 'Vũng Tàu', details: '2 ngày · 2 người · 1,5 triệu' },
+  { id: 1, destination: 'Đà Lạt', details: '3 ngày · 2 người · 4 triệu/người' },
+  { id: 2, destination: 'Phú Quốc', details: '4 ngày · 3 người · 4 triệu/người' },
+  { id: 3, destination: 'Vũng Tàu', details: '2 ngày · 2 người · 1,5 triệu/người' },
 ];
 
 export function TripPresets({ onApplyPreset, loading }: TripPresetsProps) {

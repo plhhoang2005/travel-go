@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { after, test } from 'node:test';
 import { createServer } from 'vite';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 const vite = await createServer({ configFile: false, server: { middlewareMode: true }, appType: 'custom' });
 const { fetchBudgetSensitivity, fetchPlanTrip } = await vite.ssrLoadModule('/src/api/tripApi.ts');
@@ -70,4 +72,23 @@ test('new web request sends only per-person budget to both planning APIs', async
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+test('planning form and preset describe the entered amount per person', async () => {
+  const { TripForm } = await vite.ssrLoadModule('/src/components/TripForm.tsx');
+  const { TripPresets } = await vite.ssrLoadModule('/src/components/TripPresets.tsx');
+  const form = renderToStaticMarkup(React.createElement(TripForm, {
+    request: { ...request, budgetVnd: 0, budgetPerPersonVnd: 4000000 },
+    onChange: () => {},
+    onSubmit: () => {},
+    loading: false,
+    departureDate: '',
+    onDateChange: () => {},
+  }));
+  const presets = renderToStaticMarkup(React.createElement(TripPresets, {
+    onApplyPreset: () => {},
+    loading: false,
+  }));
+  assert.match(form, /Ngân sách \(VNĐ\/người\)/);
+  assert.match(form, /value="4000000"/);
+  assert.match(presets, /4 triệu\/người/);
 });
