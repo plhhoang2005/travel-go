@@ -1,5 +1,6 @@
 package com.travelgo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ public class PlanTripResponse {
     private List<TransportOption> transportOptions;
     private List<ItineraryDay> itineraryDays;
     private BudgetBreakdown budgetBreakdown;
+    private BudgetContext budgetContext;
     private String aiExplanation;
     private Map<String, String> dataSources;
     private List<String> assumptions;
@@ -30,6 +32,9 @@ public class PlanTripResponse {
     public BudgetBreakdown getBudgetBreakdown() { return budgetBreakdown; }
     public void setBudgetBreakdown(BudgetBreakdown budgetBreakdown) { this.budgetBreakdown = budgetBreakdown; }
 
+    public BudgetContext getBudgetContext() { return budgetContext; }
+    public void setBudgetContext(BudgetContext budgetContext) { this.budgetContext = budgetContext; }
+
     public String getAiExplanation() { return aiExplanation; }
     public void setAiExplanation(String aiExplanation) { this.aiExplanation = aiExplanation; }
 
@@ -39,6 +44,23 @@ public class PlanTripResponse {
     public List<String> getAssumptions() { return assumptions; }
     public void setAssumptions(List<String> assumptions) { this.assumptions = assumptions; }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class BudgetContext {
+        private String inputBasis;
+        private Long budgetPerPersonVnd;
+        private long totalBudgetVnd;
+        private int numPeople;
+
+        public String getInputBasis() { return inputBasis; }
+        public void setInputBasis(String inputBasis) { this.inputBasis = inputBasis; }
+        public Long getBudgetPerPersonVnd() { return budgetPerPersonVnd; }
+        public void setBudgetPerPersonVnd(Long budgetPerPersonVnd) { this.budgetPerPersonVnd = budgetPerPersonVnd; }
+        public long getTotalBudgetVnd() { return totalBudgetVnd; }
+        public void setTotalBudgetVnd(long totalBudgetVnd) { this.totalBudgetVnd = totalBudgetVnd; }
+        public int getNumPeople() { return numPeople; }
+        public void setNumPeople(int numPeople) { this.numPeople = numPeople; }
+    }
+
     // Nested Classes
     public static class DestinationCard {
         private String id;
@@ -47,6 +69,7 @@ public class PlanTripResponse {
         private Map<String, Double> normalizedScores;
         private Map<String, Double> scoreContributions;
         private long estimatedCostVnd;
+        private long estimatedGroupCostVnd;
         private String weatherSource;
         private double avgTempMax;
         private double avgPrecipitation;
@@ -74,6 +97,9 @@ public class PlanTripResponse {
         public long getEstimatedCostVnd() { return estimatedCostVnd; }
         public void setEstimatedCostVnd(long estimatedCostVnd) { this.estimatedCostVnd = estimatedCostVnd; }
 
+        public long getEstimatedGroupCostVnd() { return estimatedGroupCostVnd; }
+        public void setEstimatedGroupCostVnd(long estimatedGroupCostVnd) { this.estimatedGroupCostVnd = estimatedGroupCostVnd; }
+
         public String getWeatherSource() { return weatherSource; }
         public void setWeatherSource(String weatherSource) { this.weatherSource = weatherSource; }
 
@@ -97,6 +123,7 @@ public class PlanTripResponse {
         private String mode;
         private String displayName;
         private long priceTotalVnd;
+        private long groupPriceTotalVnd;
         private double durationHours;
         private int comfortScore;
         private boolean isParetoOptimal;
@@ -113,6 +140,9 @@ public class PlanTripResponse {
 
         public long getPriceTotalVnd() { return priceTotalVnd; }
         public void setPriceTotalVnd(long priceTotalVnd) { this.priceTotalVnd = priceTotalVnd; }
+
+        public long getGroupPriceTotalVnd() { return groupPriceTotalVnd; }
+        public void setGroupPriceTotalVnd(long groupPriceTotalVnd) { this.groupPriceTotalVnd = groupPriceTotalVnd; }
 
         public double getDurationHours() { return durationHours; }
         public void setDurationHours(double durationHours) { this.durationHours = durationHours; }
@@ -151,6 +181,7 @@ public class PlanTripResponse {
         private String time;
         private String title;
         private long costVnd;
+        private long groupCostVnd;
         private double durationHours;
 
         public Activity() {}
@@ -172,6 +203,8 @@ public class PlanTripResponse {
 
         public double getDurationHours() { return durationHours; }
         public void setDurationHours(double durationHours) { this.durationHours = durationHours; }
+        public long getGroupCostVnd() { return groupCostVnd; }
+        public void setGroupCostVnd(long groupCostVnd) { this.groupCostVnd = groupCostVnd; }
     }
 
     public static class BudgetBreakdown {

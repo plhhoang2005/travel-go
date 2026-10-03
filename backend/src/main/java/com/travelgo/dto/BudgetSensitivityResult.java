@@ -1,5 +1,6 @@
 package com.travelgo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.travelgo.dto.PlanTripResponse.BudgetBreakdown;
 import java.util.List;
 
@@ -16,8 +17,10 @@ public class BudgetSensitivityResult {
     public List<BudgetStep> getSteps() { return steps; }
     public void setSteps(List<BudgetStep> steps) { this.steps = steps; }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class BudgetStep {
         private long budgetVnd;
+        private Long budgetPerPersonVnd;
         private String budgetLabel;
         private String winningDestinationId;
         private String winningDestinationName;
@@ -36,6 +39,9 @@ public class BudgetSensitivityResult {
 
         public long getBudgetVnd() { return budgetVnd; }
         public void setBudgetVnd(long budgetVnd) { this.budgetVnd = budgetVnd; }
+
+        public Long getBudgetPerPersonVnd() { return budgetPerPersonVnd; }
+        public void setBudgetPerPersonVnd(Long budgetPerPersonVnd) { this.budgetPerPersonVnd = budgetPerPersonVnd; }
 
         public String getBudgetLabel() { return budgetLabel; }
         public void setBudgetLabel(String budgetLabel) { this.budgetLabel = budgetLabel; }

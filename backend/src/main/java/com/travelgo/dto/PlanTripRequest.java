@@ -7,6 +7,7 @@ public class PlanTripRequest {
     private int numDays;
     private int numPeople;
     private long budgetVnd;
+    private long budgetPerPersonVnd;
     private List<String> preferences;
     private String priority; // "cheapest", "fastest", "balanced", "comfortable"
 
@@ -32,6 +33,9 @@ public class PlanTripRequest {
 
     public long getBudgetVnd() { return budgetVnd; }
     public void setBudgetVnd(long budgetVnd) { this.budgetVnd = budgetVnd; }
+
+    public long getBudgetPerPersonVnd() { return budgetPerPersonVnd; }
+    public void setBudgetPerPersonVnd(long budgetPerPersonVnd) { this.budgetPerPersonVnd = budgetPerPersonVnd; }
 
     public List<String> getPreferences() { return preferences; }
     public void setPreferences(List<String> preferences) { this.preferences = preferences; }

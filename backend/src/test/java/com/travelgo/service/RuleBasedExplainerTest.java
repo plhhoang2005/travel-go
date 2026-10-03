@@ -81,6 +81,7 @@ public class RuleBasedExplainerTest {
         assertTrue(explanation.contains("MCDA"));
         assertTrue(explanation.contains("Pareto"));
         assertTrue(explanation.contains("Xe khách"));
+        assertTrue(explanation.contains("VNĐ/người"));
         assertTrue(explanation.contains("Open-Meteo"));
         assertTrue(explanation.contains("An toàn Tài chính") || explanation.contains("dự phòng"));
     }
@@ -106,5 +107,26 @@ public class RuleBasedExplainerTest {
         assertNotNull(explanation);
         assertTrue(explanation.contains("Vũng Tàu"));
         assertTrue(explanation.contains("Chi phí phù hợp") || explanation.contains("tiết kiệm"));
+    }
+    @Test
+    public void overBudgetExplanationStatesTheActualShortfall() {
+        PlanTripRequest req = new PlanTripRequest("Ho Chi Minh", 5, 2, 0, List.of(), "balanced");
+        req.setBudgetPerPersonVnd(4_000_000L);
+        PlanTripResponse resp = new PlanTripResponse();
+        resp.setWinnerId("da-lat");
+        DestinationCard winner = new DestinationCard();
+        winner.setId("da-lat");
+        winner.setName("Đà Lạt");
+        winner.setNormalizedScores(Map.of());
+        resp.setTopDestinations(List.of(winner));
+        resp.setTransportOptions(List.of());
+        BudgetBreakdown budget = new BudgetBreakdown();
+        budget.setRemainingSafetyMargin(-1_600_000L);
+        resp.setBudgetBreakdown(budget);
+
+        String explanation = explainerService.generateExplanation(req, resp);
+        assertTrue(explanation.contains("vượt ngân sách"));
+        assertTrue(explanation.contains("1.600.000"));
+        assertFalse(explanation.contains("dự phòng **-"));
     }
 }
