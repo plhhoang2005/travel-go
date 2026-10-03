@@ -43,10 +43,12 @@ export function BudgetPage({ request, response, onRequestChange, onRePlan }: Pro
     return () => {
       isMounted = false;
     };
-  }, [request.origin, request.numDays, request.numPeople, request.budgetVnd, request.preferences, request.priority]);
+  }, [request.origin, request.numDays, request.numPeople, request.budgetVnd, request.budgetPerPersonVnd, request.preferences, request.priority]);
 
   const handleApplyBudget = (newBudget: number) => {
-    const updated: PlanTripRequest = { ...request, budgetVnd: newBudget };
+    const updated: PlanTripRequest = request.budgetPerPersonVnd
+      ? { ...request, budgetVnd: 0, budgetPerPersonVnd: newBudget }
+      : { ...request, budgetVnd: newBudget };
     if (onRequestChange) {
       onRequestChange(updated);
     }
@@ -55,13 +57,16 @@ export function BudgetPage({ request, response, onRequestChange, onRePlan }: Pro
     }
   };
 
+  const totalBudget = response?.budgetContext?.totalBudgetVnd
+    ?? (request.budgetPerPersonVnd ? null : request.budgetVnd);
+
   return (
     <>
       <PageIntro
         eyebrow="Giữ khoản chi trong tầm tay"
         title="Phân bổ ngân sách & Mô phỏng độ nhạy"
       >
-        Theo dõi cách ngân sách {request.budgetVnd.toLocaleString('vi-VN')}đ được chia cho toàn bộ chuyến đi và kiểm thử các kịch bản tài chính đa chiều.
+        Theo dõi ngân sách nhóm {totalBudget === null ? 'chưa có dữ liệu' : totalBudget.toLocaleString('vi-VN') + 'đ'} do máy chủ tính, cùng các kịch bản tài chính.
       </PageIntro>
 
       {response ? (

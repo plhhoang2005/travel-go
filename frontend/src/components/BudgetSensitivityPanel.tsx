@@ -4,26 +4,27 @@ import { BudgetSensitivityResultData, BudgetStepData, PlanTripRequest } from '..
 interface Props {
   request: PlanTripRequest;
   sensitivityData: BudgetSensitivityResultData | null;
-  onApplyBudget?: (budgetVnd: number) => void;
+  onApplyBudget?: (budgetAmount: number) => void;
 }
 
 export function BudgetSensitivityPanel({ request, sensitivityData, onApplyBudget }: Props) {
-  const [customBudget, setCustomBudget] = useState<number>(request.budgetVnd);
+  const perPerson = (request.budgetPerPersonVnd ?? 0) > 0;
+  const [customBudget, setCustomBudget] = useState<number>(request.budgetPerPersonVnd ?? request.budgetVnd);
 
   const steps = sensitivityData?.steps || [];
 
-  // Find closest step or matching step
-  const activeStep = steps.find((s) => s.budgetVnd === customBudget) || steps[1] || steps[0];
+  const stepAmount = (step: BudgetStepData) => perPerson ? step.budgetPerPersonVnd : step.budgetVnd;
+  const activeStep = steps.find((step) => stepAmount(step) === customBudget);
 
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = Number(e.target.value);
     setCustomBudget(val);
   };
 
-  const handleApply = (budgetVnd: number) => {
-    setCustomBudget(budgetVnd);
+  const handleApply = (budgetAmount: number) => {
+    setCustomBudget(budgetAmount);
     if (onApplyBudget) {
-      onApplyBudget(budgetVnd);
+      onApplyBudget(budgetAmount);
     }
   };
 
@@ -67,7 +68,7 @@ export function BudgetSensitivityPanel({ request, sensitivityData, onApplyBudget
           <label htmlFor="budget-slider" className="text-xs md:text-sm font-bold text-ink flex items-center gap-1.5">
             <span>🎚️ Kéo thử ngân sách:</span>
             <span className="text-brand font-extrabold text-base md:text-lg">
-              {customBudget.toLocaleString('vi-VN')} VNĐ
+              {customBudget.toLocaleString('vi-VN')} VNĐ{perPerson ? '/người' : ' tổng nhóm'}
             </span>
           </label>
           <div className="flex gap-2">
@@ -82,7 +83,7 @@ export function BudgetSensitivityPanel({ request, sensitivityData, onApplyBudget
                     : 'bg-white text-muted border border-slate-200 hover:text-ink'
                 }`}
               >
-                {(b / 1000000).toFixed(0)} Triệu
+                {(b / 1000000).toFixed(0)} triệu{perPerson ? '/người' : ' tổng nhóm'}
               </button>
             ))}
           </div>
@@ -100,16 +101,17 @@ export function BudgetSensitivityPanel({ request, sensitivityData, onApplyBudget
         />
 
         <div className="flex justify-between text-[11px] font-semibold text-muted">
-          <span>2.500.000đ (Tối thiểu)</span>
-          <span>4.000.000đ (Tiêu chuẩn Minh)</span>
-          <span>6.500.000đ (Tối đa)</span>
+          <span>2.500.000đ{perPerson ? '/người' : ' tổng nhóm'} (Tối thiểu)</span>
+          <span>4.000.000đ{perPerson ? '/người' : ' tổng nhóm'} (Tiêu chuẩn Minh)</span>
+          <span>6.500.000đ{perPerson ? '/người' : ' tổng nhóm'} (Tối đa)</span>
         </div>
+        {!activeStep && <p role="status" className="text-sm text-muted">Chưa tính mức ngân sách này. Chọn một mốc 3, 4 hoặc 5 triệu để xem kết quả từ máy chủ.</p>}
       </div>
 
       {/* 3 Step Comparison Grid */}
       <div className="grid gap-4 md:grid-cols-3">
         {steps.map((step) => {
-          const isSelected = step.budgetVnd === customBudget;
+          const isSelected = stepAmount(step) === customBudget;
           const isHealthy = step.remainingSafetyMarginVnd >= 500000;
           const isTight = step.remainingSafetyMarginVnd >= 0 && step.remainingSafetyMarginVnd < 500000;
 
@@ -179,7 +181,7 @@ export function BudgetSensitivityPanel({ request, sensitivityData, onApplyBudget
 
               <button
                 type="button"
-                onClick={() => handleApply(step.budgetVnd)}
+                onClick={() => { const amount = stepAmount(step); if (amount !== undefined) handleApply(amount); }}
                 className={`mt-4 w-full rounded-xl py-2 text-xs font-bold transition-all ${
                   isSelected
                     ? 'bg-brand text-white shadow-sm'

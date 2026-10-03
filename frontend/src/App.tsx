@@ -14,7 +14,7 @@ import { PlanTripRequest, PlanTripResponse } from './types/trip';
 
 const BudgetPage = lazy(() => import('./pages/BudgetPage').then((module) => ({ default: module.BudgetPage })));
 const initialRequest: PlanTripRequest = {
-  origin: 'Ho Chi Minh', numDays: 3, numPeople: 2, budgetVnd: 4000000,
+  origin: 'Ho Chi Minh', numDays: 3, numPeople: 2, budgetVnd: 0, budgetPerPersonVnd: 4000000,
   preferences: ['mountain', 'food', 'romantic'], priority: 'balanced',
 };
 const pageTitles: Record<string, string> = {
@@ -64,11 +64,12 @@ export default function App() {
     setLoading(true);
     setError(null);
     const snapshot = { ...nextRequest, preferences: [...nextRequest.preferences] };
+    const dateSnapshot = departureDate;
     try {
       const result = await fetchPlanTrip(snapshot);
       setResponse(result);
       setPlannedRequest(snapshot);
-      setPlannedDate(departureDate);
+      setPlannedDate(dateSnapshot);
       setIsDemoData(false);
     } catch {
       setError('Không thể tạo kế hoạch chuyến đi. Vui lòng kiểm tra kết nối và thử lại.');
@@ -81,7 +82,8 @@ export default function App() {
   const useDemoData = () => {
     const demo = getFallbackResponse();
     setResponse(demo);
-    setPlannedRequest({ ...initialRequest, preferences: [...initialRequest.preferences] });
+    setPlannedRequest({ ...initialRequest, budgetVnd: 4000000, budgetPerPersonVnd: undefined,
+      preferences: [...initialRequest.preferences] });
     setPlannedDate('');
     setIsDemoData(true);
     setError(null);

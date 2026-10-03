@@ -17,13 +17,26 @@ export interface RawDestination {
   avg_daily_cost_vnd: number;
 }
 
+function toApiRequest(req: PlanTripRequest) {
+  if (req.budgetPerPersonVnd && req.budgetVnd === 0) {
+    return {
+      origin: req.origin,
+      numDays: req.numDays,
+      numPeople: req.numPeople,
+      budgetPerPersonVnd: req.budgetPerPersonVnd,
+      preferences: req.preferences,
+      priority: req.priority,
+    };
+  }
+  return req;
+}
 export async function fetchPlanTrip(req: PlanTripRequest): Promise<PlanTripResponse> {
   const response = await fetch(`${API_BASE_URL}/plan-trip`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req),
+    body: JSON.stringify(toApiRequest(req)),
   });
 
   if (!response.ok) {
@@ -165,7 +178,7 @@ export async function fetchBudgetSensitivity(req: PlanTripRequest): Promise<Budg
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(req),
+    body: JSON.stringify(toApiRequest(req)),
   });
 
   if (!response.ok) {

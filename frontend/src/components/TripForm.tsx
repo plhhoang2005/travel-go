@@ -20,7 +20,9 @@ export function TripForm({ request, onChange, onSubmit, loading, departureDate, 
     ...request,
     preferences: request.preferences.includes(id) ? request.preferences.filter((item) => item !== id) : [...request.preferences, id],
   });
-  const valid = request.preferences.length > 0 && request.budgetVnd >= 1000000 && Number.isFinite(request.budgetVnd);
+  const perPersonBudget = request.budgetPerPersonVnd ?? 0;
+  const valid = request.preferences.length > 0 && Number.isSafeInteger(perPersonBudget)
+    && perPersonBudget >= 1000000 && perPersonBudget <= 100000000;
   const today = new Date();
   const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
@@ -37,7 +39,7 @@ export function TripForm({ request, onChange, onSubmit, loading, departureDate, 
           <label className="travel-field"><span>Ngày đi dự kiến</span><input type="date" min={minDate} value={departureDate} onChange={(e) => onDateChange(e.target.value)} aria-describedby="date-note" /></label>
           <label className="travel-field"><span>Số ngày</span><select value={request.numDays} onChange={(e) => onChange({ ...request, numDays: Number(e.target.value) })}>{[2, 3, 4, 5].map((n) => <option key={n} value={n}>{n} ngày</option>)}</select></label>
           <label className="travel-field"><span>Số người</span><select value={request.numPeople} onChange={(e) => onChange({ ...request, numPeople: Number(e.target.value) })}>{[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} người</option>)}</select></label>
-          <label className="travel-field"><span>Ngân sách (VNĐ)</span><input type="number" inputMode="numeric" required min={1000000} max={100000000} step={500000} value={request.budgetVnd || ''} onChange={(e) => onChange({ ...request, budgetVnd: Number(e.target.value) })} /></label>
+          <label className="travel-field"><span>Ngân sách (VNĐ/người)</span><input type="number" inputMode="numeric" required min={1000000} max={100000000} step={500000} value={request.budgetPerPersonVnd || ''} onChange={(e) => onChange({ ...request, budgetVnd: 0, budgetPerPersonVnd: Number(e.target.value) })} /></label>
           <button type="submit" disabled={!valid || loading} className="button-primary flex items-center justify-center gap-2 px-3"><Search size={17} aria-hidden="true" />{loading ? 'Đang lập...' : 'Lập kế hoạch'}</button>
         </div>
         <p id="date-note" className="mt-3 text-xs leading-5 text-muted">Ngày đi được lưu cùng lịch trình để bạn tham khảo. Chi phí và thời tiết chưa thay đổi theo ngày chọn.</p>

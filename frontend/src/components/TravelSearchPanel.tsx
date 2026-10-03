@@ -14,9 +14,9 @@ type Props = {
   departureDate: string; onDateChange: (date: string) => void;
 };
 const presets: Record<number, PlanTripRequest> = {
-  1: { origin: 'Ho Chi Minh', numDays: 3, numPeople: 2, budgetVnd: 4000000, preferences: ['mountain', 'food', 'romantic'], priority: 'balanced' },
-  2: { origin: 'Ho Chi Minh', numDays: 4, numPeople: 3, budgetVnd: 8000000, preferences: ['beach', 'resort', 'seafood'], priority: 'comfortable' },
-  3: { origin: 'Ho Chi Minh', numDays: 2, numPeople: 2, budgetVnd: 1500000, preferences: ['beach', 'food', 'quick-trip'], priority: 'cheapest' },
+  1: { origin: 'Ho Chi Minh', numDays: 3, numPeople: 2, budgetVnd: 0, budgetPerPersonVnd: 4000000, preferences: ['mountain', 'food', 'romantic'], priority: 'balanced' },
+  2: { origin: 'Ho Chi Minh', numDays: 4, numPeople: 3, budgetVnd: 0, budgetPerPersonVnd: 4000000, preferences: ['beach', 'resort', 'seafood'], priority: 'comfortable' },
+  3: { origin: 'Ho Chi Minh', numDays: 2, numPeople: 2, budgetVnd: 0, budgetPerPersonVnd: 1500000, preferences: ['beach', 'food', 'quick-trip'], priority: 'cheapest' },
 };
 
 export function TravelSearchPanel({ request, onChange, onSubmit, loading, departureDate, onDateChange }: Props) {
