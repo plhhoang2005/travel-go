@@ -16,9 +16,14 @@ interface Props {
 
 export function BudgetPage({ request, response, onRequestChange, onRePlan }: Props) {
   const [sensitivityData, setSensitivityData] = useState<BudgetSensitivityResultData | null>(null);
+  const [sensitivityError, setSensitivityError] = useState<string | null>(null);
+  const [sensitivityLoading, setSensitivityLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
+    setSensitivityData(null);
+    setSensitivityError(null);
+    setSensitivityLoading(true);
     fetchBudgetSensitivity(request)
       .then((data) => {
         if (isMounted) {
@@ -27,12 +32,18 @@ export function BudgetPage({ request, response, onRequestChange, onRePlan }: Pro
       })
       .catch((err) => {
         console.warn('Error loading sensitivity:', err);
+        if (isMounted) {
+          setSensitivityError('Không thể tải mô phỏng ngân sách từ máy chủ. Vui lòng thử lại sau.');
+        }
+      })
+      .finally(() => {
+        if (isMounted) setSensitivityLoading(false);
       });
 
     return () => {
       isMounted = false;
     };
-  }, [request.origin, request.numDays, request.numPeople, request.priority]);
+  }, [request.origin, request.numDays, request.numPeople, request.budgetVnd, request.preferences, request.priority]);
 
   const handleApplyBudget = (newBudget: number) => {
     const updated: PlanTripRequest = { ...request, budgetVnd: newBudget };
@@ -57,11 +68,15 @@ export function BudgetPage({ request, response, onRequestChange, onRePlan }: Pro
         <div className="page-shell py-10 md:py-12 space-y-10">
           <TripResultNav />
           <BudgetChart budget={response.budgetBreakdown} />
-          <BudgetSensitivityPanel
-            request={request}
-            sensitivityData={sensitivityData}
-            onApplyBudget={handleApplyBudget}
-          />
+          {sensitivityLoading && <p role="status">Đang tải mô phỏng ngân sách…</p>}
+          {sensitivityError && <p role="alert" className="text-rose-700">{sensitivityError}</p>}
+          {sensitivityData && (
+            <BudgetSensitivityPanel
+              request={request}
+              sensitivityData={sensitivityData}
+              onApplyBudget={handleApplyBudget}
+            />
+          )}
         </div>
       ) : (
         <EmptyTripState />
