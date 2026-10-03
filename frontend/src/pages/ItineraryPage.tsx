@@ -23,6 +23,8 @@ export function ItineraryPage({
   const days = localDays || response?.itineraryDays || [];
 
   const winner = response?.topDestinations?.find((d) => d.id === response.winnerId) || response?.topDestinations?.[0];
+  const totalBudget = response?.budgetContext?.totalBudgetVnd
+    ?? (request.budgetPerPersonVnd ? null : request.budgetVnd);
   const bestTransport = response?.transportOptions?.find((t) => t.isParetoOptimal) || response?.transportOptions?.[0];
 
   const handleDeleteActivity = (dayNum: number, activityIndex: number) => {
@@ -49,7 +51,7 @@ export function ItineraryPage({
     if (departureDate) {
       text += `🗓️ Khởi hành: ${new Date(departureDate + 'T00:00:00').toLocaleDateString('vi-VN')}\n`;
     }
-    text += `💰 Ngân sách: ${request.budgetVnd.toLocaleString('vi-VN')}đ\n`;
+    text += `💰 Ngân sách nhóm: ${totalBudget === null ? 'Chưa có dữ liệu' : totalBudget.toLocaleString('vi-VN') + 'đ'}\n`;
     if (bestTransport) {
       text += `🚗 Di chuyển: ${bestTransport.displayName} (${bestTransport.durationHours}h - ${bestTransport.priceTotalVnd.toLocaleString('vi-VN')}đ)\n`;
     }
@@ -157,7 +159,7 @@ export function ItineraryPage({
               <div className="flex flex-wrap items-center gap-3">
                 <div className="rounded-xl bg-white border border-line px-4 py-2.5 shadow-sm text-left md:text-right">
                   <span className="text-[11px] text-muted block">Tổng ngân sách</span>
-                  <span className="text-lg font-bold text-brand">{request.budgetVnd.toLocaleString('vi-VN')}đ</span>
+                  <span className="text-lg font-bold text-brand">{totalBudget === null ? 'Chưa có dữ liệu' : totalBudget.toLocaleString('vi-VN') + 'đ'}</span>
                 </div>
                 {response.budgetBreakdown && (
                   <div className="rounded-xl bg-emerald-50 border border-emerald-200/80 px-4 py-2.5 shadow-sm text-left md:text-right">

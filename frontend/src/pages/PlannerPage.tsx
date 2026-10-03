@@ -30,13 +30,14 @@ export function PlannerPage({ request, onChange, onSubmit, loading, error, onUse
     const updatedRequest: PlanTripRequest = {
       ...request,
       preferences: dest.tags && dest.tags.length > 0 ? dest.tags.slice(0, 3) : ['mountain', 'food'],
-      budgetVnd: Math.max(request.budgetVnd, (dest.avg_daily_cost_vnd * request.numDays * request.numPeople) + 1_000_000),
     };
     onChange(updatedRequest);
     setPlannerMode('form');
     void onSubmit(updatedRequest);
   };
 
+  const totalBudget = response?.budgetContext?.totalBudgetVnd
+    ?? (plannedRequest.budgetPerPersonVnd ? null : plannedRequest.budgetVnd);
   const winner = response?.topDestinations.find((item) => item.id === response.winnerId) || response?.topDestinations[0];
 
   return (
@@ -125,7 +126,7 @@ export function PlannerPage({ request, onChange, onSubmit, loading, error, onUse
                   <p className="eyebrow">Kế hoạch đã sẵn sàng</p>
                   <h2 id="plan-created" className="mt-2 text-2xl font-semibold">{winner.name} đang chờ bạn.</h2>
                   <p className="mt-2 text-sm text-muted">
-                    {plannedRequest.numDays} ngày · {plannedRequest.numPeople} người · Ngân sách {plannedRequest.budgetVnd.toLocaleString('vi-VN')}đ
+                    {plannedRequest.numDays} ngày · {plannedRequest.numPeople} người · Ngân sách nhóm {totalBudget === null ? 'chưa có dữ liệu' : totalBudget.toLocaleString('vi-VN') + 'đ'}
                     {plannedDate && ` · Khởi hành ${new Date(plannedDate + 'T00:00:00').toLocaleDateString('vi-VN')}`}
                   </p>
                 </div>
