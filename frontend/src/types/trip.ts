@@ -3,6 +3,7 @@ export interface PlanTripRequest {
   numDays: number;
   numPeople: number;
   budgetVnd: number;
+  budgetPerPersonVnd?: number;
   preferences: string[];
   priority: 'cheapest' | 'fastest' | 'balanced' | 'comfortable';
 }
