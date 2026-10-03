@@ -3,7 +3,7 @@ import { after, test } from 'node:test';
 import { createServer } from 'vite';
 
 const vite = await createServer({ configFile: false, server: { middlewareMode: true }, appType: 'custom' });
-const { fetchBudgetSensitivity } = await vite.ssrLoadModule('/src/api/tripApi.ts');
+const { fetchBudgetSensitivity, fetchPlanTrip } = await vite.ssrLoadModule('/src/api/tripApi.ts');
 after(() => vite.close());
 
 const request = {
@@ -45,6 +45,28 @@ test('budget sensitivity reports a connection failure instead of returning made-
 
   try {
     await assert.rejects(fetchBudgetSensitivity(request), /Network unavailable/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test('new web request sends only per-person budget to both planning APIs', async () => {
+  const originalFetch = globalThis.fetch;
+  const bodies = [];
+  globalThis.fetch = async (_url, options) => {
+    bodies.push(JSON.parse(options.body));
+    return { ok: true, json: async () => bodies.length === 1 ? { transportOptions: [] } : { steps: [] } };
+  };
+
+  try {
+    const perPersonRequest = { ...request, budgetVnd: 0, budgetPerPersonVnd: 4000000 };
+    await fetchPlanTrip(perPersonRequest);
+    await fetchBudgetSensitivity(perPersonRequest);
+    for (const body of bodies) {
+      assert.equal(body.budgetPerPersonVnd, 4000000);
+      assert.equal(body.numPeople, 2);
+      assert.equal('budgetVnd' in body, false);
+    }
   } finally {
     globalThis.fetch = originalFetch;
   }
