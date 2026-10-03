@@ -2,6 +2,11 @@ package com.travelgo.decision.budget;
 
 import com.travelgo.dto.PlanTripRequest;
 import com.travelgo.dto.PlanTripResponse.BudgetBreakdown;
+import com.travelgo.dto.PlanTripResponse.ItineraryDay;
+import com.travelgo.model.DestinationPois.PoiItem;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class BudgetCalculator {
     private BudgetCalculator() {}
@@ -24,6 +29,17 @@ public final class BudgetCalculator {
 
     public static long groupCost(long pricePerPerson, int numPeople) {
         return Math.multiplyExact(pricePerPerson, numPeople);
+    }
+
+    public static long attractionsPerPerson(List<ItineraryDay> days, List<PoiItem> pois) {
+        Map<String, String> types = pois.stream().collect(Collectors.toMap(
+                PoiItem::getName, PoiItem::getType, (first, ignored) -> first));
+        return days.stream().flatMap(day -> day.getActivities().stream())
+                .filter(activity -> {
+                    String type = types.get(activity.getTitle());
+                    return !"food".equalsIgnoreCase(type) && !"cafe".equalsIgnoreCase(type);
+                })
+                .mapToLong(activity -> activity.getCostVnd()).sum();
     }
 
     public static BudgetBreakdown breakdown(long totalBudget, int numDays, int numPeople,

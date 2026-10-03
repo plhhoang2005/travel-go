@@ -15,6 +15,7 @@ export interface DestinationCardData {
   normalizedScores: Record<string, number>;
   scoreContributions: Record<string, number>;
   estimatedCostVnd: number;
+  estimatedGroupCostVnd?: number;
   weatherSource?: string;
   avgTempMax?: number;
   avgPrecipitation?: number;
@@ -27,6 +28,7 @@ export interface TransportOptionData {
   mode: string;
   displayName: string;
   priceTotalVnd: number;
+  groupPriceTotalVnd?: number;
   durationHours: number;
   comfortScore: number;
   isParetoOptimal: boolean;
@@ -38,6 +40,7 @@ export interface ActivityData {
   time: string;
   title: string;
   costVnd: number;
+  groupCostVnd?: number;
   durationHours: number;
 }
 
@@ -55,7 +58,15 @@ export interface BudgetBreakdownData {
   remainingSafetyMargin: number;
 }
 
+export interface BudgetContextData {
+  inputBasis: 'PER_PERSON' | 'TOTAL_LEGACY';
+  budgetPerPersonVnd?: number;
+  totalBudgetVnd: number;
+  numPeople: number;
+}
+
 export interface PlanTripResponse {
+  budgetContext?: BudgetContextData;
   winnerId: string;
   topDestinations: DestinationCardData[];
   transportOptions: TransportOptionData[];
