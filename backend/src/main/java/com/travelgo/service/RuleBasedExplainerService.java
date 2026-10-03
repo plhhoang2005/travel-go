@@ -135,19 +135,19 @@ public class RuleBasedExplainerService {
         if (budget == null) return;
 
         long margin = budget.getRemainingSafetyMargin();
+        if (margin < 0) {
+            sb.append(String.format("💰 **Ngân sách**: Kế hoạch vượt ngân sách **%s VNĐ**. ",
+                    formatVnd(Math.negateExact(margin))));
+            sb.append("Bạn có thể cân nhắc hạng phòng hoặc phương tiện tiết kiệm hơn.");
+            return;
+        }
+
         long totalBudget = BudgetCalculator.totalBudget(req);
         double percent = (totalBudget > 0) ? ((double) margin / totalBudget) * 100.0 : 0.0;
-
         sb.append(String.format("💰 **Biên độ An toàn Tài chính**: Bạn còn khoản dự phòng **%s VNĐ** (tương đương **%.1f%%** ngân sách). ",
-                formatVnd(margin), Math.max(0.0, percent)));
-
-        if (margin >= 0) {
-            sb.append("Mức dự phòng này hoàn toàn đủ để bảo vệ kế hoạch của bạn trước các biến động giá thực tế (10-15%) của dịch vụ lưu trú và vé tham quan.");
-        } else {
-            sb.append("⚠️ Ngân sách đang vượt mức dự kiến nhẹ; bạn có thể cân nhắc chuyển sang hạng phòng homestay hoặc phương tiện tiết kiệm hơn.");
-        }
+                formatVnd(margin), percent));
+        sb.append("Khoản dự phòng có thể giúp bù biến động giá dịch vụ khi đặt thực tế.");
     }
-
     private String formatVnd(long amount) {
         return currencyFormatter.format(amount);
     }
