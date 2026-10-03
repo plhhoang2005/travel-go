@@ -19,6 +19,7 @@ Quy trình vận hành tiêu chuẩn (SOP) cho **Autonomous AI Coding Pipeline (
 [2. CODEBASE & ARCHITECTURE ANALYSIS]               [Xác định điểm mơ hồ]
   - Đối chiếu 5 Luật Bất Biến & Clean Layering                 │
   - Trích xuất DTO Delta (Contract First)                      ▼
+  - Đánh giá tái sử dụng nội bộ và giải pháp bên ngoài
       │                                             [Đưa ra 2-3 kịch bản]
       ▼                                                        │
 [3. IMPLEMENTATION PLAN]                                       ▼
@@ -62,6 +63,14 @@ Quy trình vận hành tiêu chuẩn (SOP) cho **Autonomous AI Coding Pipeline (
 [9. HUMAN MERGE GATE]
   - Human Tech Lead review lần cuối trên GitHub và bấm Merge vào main!
 ```
+
+---
+
+### 1.1. Đánh giá tái sử dụng trước khi triển khai chức năng mới
+
+Trước khi thiết kế hoặc viết code, Agent phải kiểm tra chức năng, component, service, API và quy ước đã có trong TravelGO để xác định phần có thể tái sử dụng. Với phần chức năng phổ biến chưa có, Agent đánh giá thư viện, tài liệu chính thức hoặc repo mẫu được duy trì phù hợp với công nghệ và kiến trúc hiện tại.
+
+Agent ghi ngắn gọn lựa chọn: tái sử dụng nội bộ, tích hợp giải pháp bên ngoài, hoặc tự triển khai; nêu lý do và cách kiểm thử sau tích hợp. Repo mẫu là nguồn tham khảo, không được xem là bằng chứng chức năng đã hoàn thiện. Mọi dependency mới và thay đổi thuộc Permission Boundary vẫn phải qua phê duyệt theo quy định hiện hành.
 
 ---
 
