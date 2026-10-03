@@ -34,15 +34,23 @@ public class TripController {
     @PostMapping("/plan-trip")
     public ResponseEntity<PlanTripResponse> planTrip(@RequestBody PlanTripRequest request) {
         validateBudget(request);
-        PlanTripResponse response = tripPlanningService.planTrip(request);
-        return ResponseEntity.ok(response);
+        try {
+            return ResponseEntity.ok(tripPlanningService.planTrip(request));
+        } catch (ArithmeticException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "numDays or numPeople produce costs exceeding supported range", e);
+        }
     }
 
     @PostMapping("/simulate-sensitivity")
     public ResponseEntity<BudgetSensitivityResult> simulateSensitivity(@RequestBody PlanTripRequest request) {
         validateBudget(request);
-        BudgetSensitivityResult result = tripPlanningService.simulateSensitivity(request);
-        return ResponseEntity.ok(result);
+        try {
+            return ResponseEntity.ok(tripPlanningService.simulateSensitivity(request));
+        } catch (ArithmeticException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "numDays or numPeople produce costs exceeding supported range", e);
+        }
     }
 
     private void validateBudget(PlanTripRequest request) {

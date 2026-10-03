@@ -52,4 +52,3 @@ class BudgetCalculatorTest {
         assertEquals(-9_200_000L, result.getRemainingSafetyMargin());
     }
 }
-

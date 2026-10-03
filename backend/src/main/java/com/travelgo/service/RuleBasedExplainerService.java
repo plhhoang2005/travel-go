@@ -65,7 +65,7 @@ public class RuleBasedExplainerService {
         sb.append(String.format("🎯 **Lựa chọn Tối ưu**: Điểm đến **%s** đạt vị trí số 1 với tổng điểm MCDA **%.1f/10**", winner.getName(), score));
 
         if ("cheapest".equals(priority)) {
-            sb.append(String.format(" nhờ chỉ số Chi phí phù hợp vượt trội (%.1f/10), ước tính %s VNĐ cho chuyến đi %d ngày",
+            sb.append(String.format(" nhờ chỉ số Chi phí phù hợp vượt trội (%.1f/10), ước tính %s VNĐ/người cho chuyến đi %d ngày",
                     normalized != null && normalized.containsKey("budget_fit") ? normalized.get("budget_fit") : 9.0,
                     formatVnd(winner.getEstimatedCostVnd()),
                     req.getNumDays()));
@@ -73,7 +73,7 @@ public class RuleBasedExplainerService {
             sb.append(String.format(" nhờ chỉ số Thời gian di chuyển thuận tiện (%.1f/10), giúp tối đa hóa thời gian trải nghiệm thực tế",
                     normalized != null && normalized.containsKey("travel_time") ? normalized.get("travel_time") : 9.0));
         } else {
-            sb.append(String.format(" nhờ sự cân bằng xuất sắc giữa Độ phù hợp sở thích (%.1f/10) và Chi phí ước tính hợp lý (%s VNĐ)",
+            sb.append(String.format(" nhờ sự cân bằng xuất sắc giữa Độ phù hợp sở thích (%.1f/10) và Chi phí ước tính hợp lý (%s VNĐ/người)",
                     normalized != null && normalized.containsKey("preference_match") ? normalized.get("preference_match") : 8.5,
                     formatVnd(winner.getEstimatedCostVnd())));
         }
@@ -89,7 +89,7 @@ public class RuleBasedExplainerService {
     private void appendTransportTradeoff(StringBuilder sb, TransportOption best, TransportOption alt) {
         if (best == null) return;
 
-        sb.append(String.format("🚗 **Tối ưu Phương tiện (Pareto Optimizer)**: Hệ thống đề xuất **%s** (%s VNĐ, %.1f giờ). ",
+        sb.append(String.format("🚗 **Tối ưu Phương tiện (Pareto Optimizer)**: Hệ thống đề xuất **%s** (%s VNĐ/người, %.1f giờ). ",
                 best.getDisplayName(),
                 formatVnd(best.getPriceTotalVnd()),
                 best.getDurationHours()));
@@ -99,10 +99,10 @@ public class RuleBasedExplainerService {
             double timeDiff = Math.abs(best.getDurationHours() - alt.getDurationHours());
 
             if (best.getPriceTotalVnd() < alt.getPriceTotalVnd()) {
-                sb.append(String.format("Phương án này giúp bạn tiết kiệm **%s VNĐ** (chấp nhận di chuyển lâu hơn %.1f giờ so với %s).",
+                sb.append(String.format("Phương án này giúp bạn tiết kiệm **%s VNĐ/người** (chấp nhận di chuyển lâu hơn %.1f giờ so với %s).",
                         formatVnd(priceDiff), timeDiff, alt.getDisplayName()));
             } else {
-                sb.append(String.format("Phương án này giúp bạn rút ngắn **%.1f giờ** di chuyển (chi phí cao hơn %s VNĐ so với %s).",
+                sb.append(String.format("Phương án này giúp bạn rút ngắn **%.1f giờ** di chuyển (chi phí cao hơn %s VNĐ/người so với %s).",
                         timeDiff, formatVnd(priceDiff), alt.getDisplayName()));
             }
         } else {

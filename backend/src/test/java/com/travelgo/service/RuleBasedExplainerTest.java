@@ -81,6 +81,7 @@ public class RuleBasedExplainerTest {
         assertTrue(explanation.contains("MCDA"));
         assertTrue(explanation.contains("Pareto"));
         assertTrue(explanation.contains("Xe khách"));
+        assertTrue(explanation.contains("VNĐ/người"));
         assertTrue(explanation.contains("Open-Meteo"));
         assertTrue(explanation.contains("An toàn Tài chính") || explanation.contains("dự phòng"));
     }
